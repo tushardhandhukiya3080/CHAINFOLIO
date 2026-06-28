@@ -33,6 +33,10 @@ export default function SimulatorPage() {
   const [inspectBlock, setInspectBlock] = useState(0);
   const [report, setReport] = useState(null);
   const [verifying, setVerifying] = useState(false);
+  // Hash + timestamp captured at mine time — compared against the live recompute.
+  const [storedHashes, setStoredHashes] = useState(() => INITIAL.map(() => null));
+  const [storedTimes, setStoredTimes] = useState(() => INITIAL.map(() => null));
+  const [learningMode, setLearningMode] = useState(true);
 
   const prefix = "0".repeat(difficulty);
 
@@ -90,6 +94,9 @@ export default function SimulatorPage() {
       [i]: { attempts: n, elapsed, hps: Math.round(n / (elapsed / 1000)) || n, done: true },
     }));
     setNonces((prev2) => prev2.map((v, idx) => (idx === i ? n : v)));
+    const stamp = new Date().toLocaleTimeString();
+    setStoredHashes((s) => s.map((v, idx) => (idx === i ? h : v)));
+    setStoredTimes((s) => s.map((v, idx) => (idx === i ? stamp : v)));
     setMiningIndex(null);
   }
 
@@ -97,6 +104,8 @@ export default function SimulatorPage() {
   async function mineAll() {
     let prev = GENESIS_PREV;
     const newNonces = [...nonces];
+    const newStored = [...storedHashes];
+    const newTimes = [...storedTimes];
     for (let i = 0; i < datas.length; i++) {
       setMiningIndex(i);
       const start = performance.now();
@@ -116,16 +125,22 @@ export default function SimulatorPage() {
       const end = performance.now();
       const elapsed = end - start;
       newNonces[i] = n;
+      newStored[i] = h;
+      newTimes[i] = new Date().toLocaleTimeString();
       prev = h;
       setStats((s) => ({ ...s, [i]: { attempts: n, elapsed, hps: Math.round(n / (elapsed / 1000)) || n, done: true } }));
     }
     setNonces(newNonces);
+    setStoredHashes(newStored);
+    setStoredTimes(newTimes);
     setMiningIndex(null);
   }
 
   function reset() {
     setDatas(INITIAL);
     setNonces(INITIAL.map(() => 0));
+    setStoredHashes(INITIAL.map(() => null));
+    setStoredTimes(INITIAL.map(() => null));
     setStats({});
     setReport(null);
   }
@@ -135,7 +150,22 @@ export default function SimulatorPage() {
     if (datas.length >= 10) return;
     setDatas((d) => [...d, `Block ${d.length} data`]);
     setNonces((n) => [...n, 0]);
+    setStoredHashes((s) => [...s, null]);
+    setStoredTimes((s) => [...s, null]);
     setReport(null);
+  }
+
+  // Remove a block (keeps at least one). Stale stats/report are cleared.
+  function removeBlock(i) {
+    if (datas.length <= 1) return;
+    const drop = (arr) => arr.filter((_, idx) => idx !== i);
+    setDatas(drop);
+    setNonces(drop);
+    setStoredHashes(drop);
+    setStoredTimes(drop);
+    setStats({});
+    setReport(null);
+    setInspectBlock((b) => Math.max(0, Math.min(b, datas.length - 2)));
   }
 
   // Walk the whole chain, recomputing each hash from genesis, and build a report.
@@ -222,6 +252,13 @@ export default function SimulatorPage() {
             </Button>
             <Button variant="ghost" onClick={reset} disabled={miningIndex !== null}>
               Reset
+            </Button>
+            <Button
+              variant={learningMode ? "primary" : "ghost"}
+              aria-pressed={learningMode}
+              onClick={() => setLearningMode((v) => !v)}
+            >
+              Learning Mode: {learningMode ? "ON" : "OFF"}
             </Button>
           </div>
         </div>
@@ -333,9 +370,20 @@ export default function SimulatorPage() {
                 <article className={`sim-block ${valid ? "valid" : "invalid"}`}>
                   <div className="sim-head">
                     <h3>Block #{i}</h3>
-                    <span className={`pill ${valid ? "ok" : "bad"}`}>
-                      {valid ? "✓ Valid" : "✗ Invalid"}
-                    </span>
+                    <div className="sim-head-right">
+                      <span className={`pill ${valid ? "ok" : "bad"}`}>
+                        {valid ? "✓ Valid" : "✗ Invalid"}
+                      </span>
+                      <button
+                        className="sim-remove"
+                        onClick={() => removeBlock(i)}
+                        disabled={miningIndex !== null || datas.length <= 1}
+                        aria-label={`Remove block ${i}`}
+                        title="Remove this block"
+                      >
+                        ✕
+                      </button>
+                    </div>
                   </div>
                   <label>Block Data</label>
                   <input value={data} onChange={(e) => editData(i, e.target.value)} disabled={miningIndex !== null} />
@@ -360,6 +408,12 @@ export default function SimulatorPage() {
                   <Button className="full" onClick={() => mineBlock(i)} disabled={miningIndex !== null}>
                     {mining ? "Mining…" : `⛏️ Mine Block ${i}`}
                   </Button>
+                  {learningMode && (
+                    <p className="learn-line">
+                      Mining increments the nonce until the SHA-256 hash starts with the required
+                      leading zeros — that brute-force search is the &quot;work&quot; in proof-of-work.
+                    </p>
+                  )}
                 </article>
                 {i < datas.length - 1 && <div className="link-arrow chain-down" aria-hidden="true">↓</div>}
               </div>
@@ -495,6 +549,41 @@ export default function SimulatorPage() {
               </div>
             </Card>
           )}
+        </div>
+
+        {/* ===== Block Integrity Verification ===== */}
+        <div className="integrity-section">
+          <h2 className="section-title">Block Integrity Verification</h2>
+          <p className="section-sub">
+            Each block&apos;s stored hash is continuously re-checked against a freshly recomputed hash
+            of its current data, nonce, and previous hash.
+          </p>
+          <div className="integrity-grid">
+            {datas.map((_, i) => {
+              const stored = storedHashes[i];
+              const calc = hashes[i] || "";
+              const prevH = i === 0 ? GENESIS_PREV : hashes[i - 1] || "";
+              const mismatch = stored && stored !== calc;
+              const statusClass = mismatch ? "bad" : stored ? "ok" : "";
+              const status = !stored ? "Not mined yet" : mismatch ? "Hash Mismatch Detected" : "Valid";
+              return (
+                <Card key={i} className={`integrity-card ${statusClass}`}>
+                  <div className="ic-head">
+                    <h3>{i === 0 ? "Genesis" : `Block ${i}`}</h3>
+                    <span className={`pill ${statusClass}`}>{status}</span>
+                  </div>
+                  <div className="ic-rows">
+                    <div><span>Stored Hash</span><code>{stored ? stored.slice(0, 24) + "…" : "—"}</code></div>
+                    <div><span>Current Calculated Hash</span><code>{calc ? calc.slice(0, 24) + "…" : "…"}</code></div>
+                    <div><span>Previous Hash</span><code>{prevH.slice(0, 24)}…</code></div>
+                    <div><span>Current Nonce</span><code>{nonces[i]}</code></div>
+                    <div><span>Timestamp</span><code>{storedTimes[i] || "—"}</code></div>
+                    <div><span>Difficulty</span><code>{difficulty} zero{difficulty === 1 ? "" : "s"} ({prefix})</code></div>
+                  </div>
+                </Card>
+              );
+            })}
+          </div>
         </div>
 
         <div className="callout">

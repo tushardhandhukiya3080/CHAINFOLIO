@@ -394,6 +394,26 @@ a.card .more { color: var(--accent); font-weight: 700; font-size: .9rem; margin-
 .net-secure { color: var(--accent-2); }
 .net-insecure { color: var(--danger); }
 
+/* ---------- Remove block + Learning Mode ---------- */
+.sim-head-right { display: flex; align-items: center; gap: 8px; }
+.sim-remove { width: 30px; height: 30px; flex: 0 0 auto; border: 2px solid var(--brut); border-radius: 0; background: var(--bg); color: var(--text); cursor: pointer; font-weight: 700; line-height: 1; }
+.sim-remove:hover:not(:disabled) { background: var(--danger); color: #000; }
+.sim-remove:disabled { opacity: .4; cursor: not-allowed; }
+.learn-line { margin: 10px 0 0; font-size: .76rem; color: var(--muted); line-height: 1.45; border-left: 4px solid var(--accent); padding-left: 10px; }
+
+/* ---------- Block Integrity Verification ---------- */
+.integrity-section { margin: 30px 0 22px; }
+.integrity-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+@media (max-width: 760px) { .integrity-grid { grid-template-columns: 1fr; } }
+.integrity-card.ok { box-shadow: 4px 4px 0 0 var(--accent-2); }
+.integrity-card.bad { border-color: var(--danger); box-shadow: 4px 4px 0 0 var(--danger); }
+.ic-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 12px; }
+.ic-head h3 { margin: 0; text-transform: uppercase; font-size: 1.05rem; }
+.ic-rows { display: grid; gap: 8px; }
+.ic-rows > div { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
+.ic-rows span { font-size: .68rem; text-transform: uppercase; color: var(--muted); font-weight: 700; letter-spacing: .04em; flex: 0 0 auto; }
+.ic-rows code { font-family: var(--mono); font-size: .75rem; color: var(--text); word-break: break-all; text-align: right; }
+
 /* ---------- Loading / skeleton ---------- */
 .spinner-wrap { display: flex; align-items: center; gap: 12px; color: var(--muted); text-transform: uppercase; font-weight: 700; }
 .spinner { width: 22px; height: 22px; border: 3px solid var(--border); border-top-color: var(--accent); animation: spin .8s linear infinite; display: inline-block; }
