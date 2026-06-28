@@ -1,24 +1,18 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { usePathname } from "next/navigation";
 
 // Full-screen preloader that counts 1 → 100, then fades out.
-// Runs on the initial load and again on every route (pathname) change.
+// Runs ONCE on the initial site load only — NOT on route changes.
 const DURATION = 1200; // ms to count up
 
 export default function Loader() {
-  const pathname = usePathname();
   const [active, setActive] = useState(true);
   const [fading, setFading] = useState(false);
   const [count, setCount] = useState(1);
   const rafRef = useRef(0);
 
   useEffect(() => {
-    setActive(true);
-    setFading(false);
-    setCount(1);
-
     let startTs;
     let hideTimer;
     const step = (ts) => {
@@ -38,7 +32,7 @@ export default function Loader() {
       cancelAnimationFrame(rafRef.current);
       clearTimeout(hideTimer);
     };
-  }, [pathname]);
+  }, []); // empty deps → only on initial mount
 
   if (!active) return null;
 
