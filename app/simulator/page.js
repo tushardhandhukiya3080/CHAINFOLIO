@@ -31,6 +31,8 @@ export default function SimulatorPage() {
   const [showBtc, setShowBtc] = useState(false);
   const [inspectorOpen, setInspectorOpen] = useState(false);
   const [inspectBlock, setInspectBlock] = useState(0);
+  const [report, setReport] = useState(null);
+  const [verifying, setVerifying] = useState(false);
 
   const prefix = "0".repeat(difficulty);
 
@@ -125,6 +127,42 @@ export default function SimulatorPage() {
     setDatas(INITIAL);
     setNonces(INITIAL.map(() => 0));
     setStats({});
+    setReport(null);
+  }
+
+  // Append a new (unmined) block to the chain. Capped to keep the demo snappy.
+  function addBlock() {
+    if (datas.length >= 10) return;
+    setDatas((d) => [...d, `Block ${d.length} data`]);
+    setNonces((n) => [...n, 0]);
+    setReport(null);
+  }
+
+  // Walk the whole chain, recomputing each hash from genesis, and build a report.
+  async function verifyChain() {
+    setVerifying(true);
+    const start = performance.now();
+    const results = [];
+    let prev = GENESIS_PREV;
+    for (let i = 0; i < datas.length; i++) {
+      const h = await sha256Hex(blockString(i, prev, nonces[i], datas[i]));
+      results.push({ index: i, valid: h.startsWith(prefix) });
+      prev = h;
+    }
+    const end = performance.now();
+    const validBlocks = results.filter((r) => r.valid).length;
+    const invalidBlocks = results.length - validBlocks;
+    const brokenLinks = results.filter((r, idx) => idx > 0 && !r.valid).length;
+    setReport({
+      results,
+      total: results.length,
+      validBlocks,
+      invalidBlocks,
+      brokenLinks,
+      time: (end - start).toFixed(1),
+      secure: invalidBlocks === 0,
+    });
+    setVerifying(false);
   }
 
   // ----- Hash Inspector derived values (for the selected block) -----
@@ -178,6 +216,9 @@ export default function SimulatorPage() {
           <div className="sim-actions">
             <Button onClick={mineAll} disabled={miningIndex !== null}>
               {miningIndex !== null ? "Mining…" : "⛏️ Mine all"}
+            </Button>
+            <Button variant="ghost" onClick={addBlock} disabled={miningIndex !== null || datas.length >= 10}>
+              + Add block
             </Button>
             <Button variant="ghost" onClick={reset} disabled={miningIndex !== null}>
               Reset
@@ -416,6 +457,40 @@ export default function SimulatorPage() {
                     The same hash shown in binary. The real mining target is &quot;enough leading zero
                     bits&quot;.
                   </div>
+                </div>
+              </div>
+            </Card>
+          )}
+        </div>
+
+        {/* ===== Blockchain Verification ===== */}
+        <div className="verify-section">
+          <h2 className="section-title">Blockchain Verification</h2>
+          <p className="section-sub">Validate every block in order and produce an integrity report.</p>
+          <Button onClick={verifyChain} disabled={verifying || miningIndex !== null}>
+            {verifying ? "Verifying…" : "✅ Verify Entire Blockchain"}
+          </Button>
+
+          {report && (
+            <Card className="verify-report">
+              <ul className="verify-list">
+                {report.results.map((r) => (
+                  <li key={r.index} className={r.valid ? "vok" : "vbad"}>
+                    {r.index === 0 ? "Genesis" : `Block ${r.index}`}: {r.valid ? "✓ Valid" : "✗ Invalid"}
+                  </li>
+                ))}
+              </ul>
+              <div className="verify-grid">
+                <div><span>Total Blocks</span><strong>{report.total}</strong></div>
+                <div><span>Valid Blocks</span><strong>{report.validBlocks}</strong></div>
+                <div><span>Invalid Blocks</span><strong>{report.invalidBlocks}</strong></div>
+                <div><span>Broken Links</span><strong>{report.brokenLinks}</strong></div>
+                <div><span>Verification Time</span><strong>{report.time} ms</strong></div>
+                <div>
+                  <span>Network Status</span>
+                  <strong className={report.secure ? "net-secure" : "net-insecure"}>
+                    {report.secure ? "🟢 Secure" : "🔴 Insecure"}
+                  </strong>
                 </div>
               </div>
             </Card>

@@ -378,6 +378,22 @@ a.card .more { color: var(--accent); font-weight: 700; font-size: .9rem; margin-
 .insp-value.scroll { max-height: 120px; overflow: auto; }
 .insp-cap { margin-top: 8px; font-size: .76rem; color: var(--muted); line-height: 1.45; }
 
+/* ---------- Blockchain Verification ---------- */
+.verify-section { margin: 30px 0 22px; }
+.verify-report { margin-top: 16px; }
+.verify-list { list-style: none; margin: 0 0 18px; padding: 0; display: grid; gap: 6px; }
+.verify-list li { font-weight: 700; text-transform: uppercase; font-size: .82rem; font-family: var(--mono); padding: 8px 12px; border: 2px solid var(--border); }
+.verify-list li.vok { color: var(--accent-2); }
+.verify-list li.vbad { color: var(--danger); border-color: var(--danger); }
+.verify-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+@media (max-width: 700px) { .verify-grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 420px) { .verify-grid { grid-template-columns: 1fr; } }
+.verify-grid > div { border: 2px solid var(--brut); background: var(--bg-soft); padding: 12px 14px; display: flex; flex-direction: column; gap: 4px; }
+.verify-grid span { font-size: .7rem; text-transform: uppercase; color: var(--muted); font-weight: 700; letter-spacing: .05em; }
+.verify-grid strong { font-size: 1.15rem; font-family: var(--font-disp); }
+.net-secure { color: var(--accent-2); }
+.net-insecure { color: var(--danger); }
+
 /* ---------- Loading / skeleton ---------- */
 .spinner-wrap { display: flex; align-items: center; gap: 12px; color: var(--muted); text-transform: uppercase; font-weight: 700; }
 .spinner { width: 22px; height: 22px; border: 3px solid var(--border); border-top-color: var(--accent); animation: spin .8s linear infinite; display: inline-block; }
