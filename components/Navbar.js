@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import ConnectWallet from "./ConnectWallet";
 import ThemeToggle from "./ThemeToggle";
+import AccountMenu from "./AccountMenu";
 
 const LINKS = [
   { href: "/", label: "Home" },
@@ -52,6 +53,7 @@ export default function Navbar() {
 
           <div className="nav-auth">
             <ThemeToggle />
+            <AccountMenu />
             <ConnectWallet />
           </div>
         </div>

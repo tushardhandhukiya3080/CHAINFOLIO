@@ -47,7 +47,7 @@ export function AuthProvider({ children }) {
   }, []);
 
   // Returns { ok: true } or { ok: false, error: "..." }
-  const signup = useCallback(async ({ name, email, phone, password }) => {
+  const signup = useCallback(async ({ name, email, password }) => {
     await new Promise((r) => setTimeout(r, 800)); // simulate network latency
     const users = readUsers();
     const exists = users.some(
@@ -55,7 +55,7 @@ export function AuthProvider({ children }) {
     );
     if (exists) return { ok: false, error: "An account with that email already exists." };
 
-    const newUser = { name, email, phone, password };
+    const newUser = { name: name || "", email, password };
     users.push(newUser);
     try {
       window.localStorage.setItem(USERS_KEY, JSON.stringify(users));

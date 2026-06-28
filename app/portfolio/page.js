@@ -2,18 +2,22 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import Card from "@/components/Card";
 import Button from "@/components/Button";
 import Spinner from "@/components/Spinner";
+import { useAuth } from "@/context/AuthContext";
 import { COIN_OPTIONS, COIN_BY_ID } from "@/lib/coins";
 import { fetchSimplePrices, formatMoney } from "@/lib/coingecko";
 
-const STORAGE_KEY = "chainfolio_holdings";
 const STATE = { LOADING: "loading", SUCCESS: "success", ERROR: "error", IDLE: "idle" };
 
 export default function PortfolioPage() {
-  const [mounted, setMounted] = useState(false);
+  const router = useRouter();
+  const { user, isAuthed, hydrated } = useAuth();
+
   const [holdings, setHoldings] = useState([]); // [{ id, amount }]
+  const [loaded, setLoaded] = useState(false); // this user's holdings loaded
   const [prices, setPrices] = useState({});
   const [status, setStatus] = useState(STATE.IDLE);
 
@@ -21,21 +25,30 @@ export default function PortfolioPage() {
   const [coinId, setCoinId] = useState(COIN_OPTIONS[0].id);
   const [amount, setAmount] = useState("");
 
-  // Load persisted holdings on mount.
+  // Per-user storage key so each account keeps its own holdings.
+  const storageKey = user ? `chainfolio_holdings_${user.email}` : null;
+
+  // Gate: ONLY this route requires auth — redirect out if not signed in.
   useEffect(() => {
+    if (hydrated && !isAuthed) router.replace("/login");
+  }, [hydrated, isAuthed, router]);
+
+  // Load this user's holdings once we know who they are.
+  useEffect(() => {
+    if (!storageKey) return;
     try {
-      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
-      if (Array.isArray(saved)) setHoldings(saved);
+      const saved = JSON.parse(localStorage.getItem(storageKey) || "[]");
+      setHoldings(Array.isArray(saved) ? saved : []);
     } catch {
-      /* ignore */
+      setHoldings([]);
     }
-    setMounted(true);
-  }, []);
+    setLoaded(true);
+  }, [storageKey]);
 
   // Persist whenever holdings change.
   useEffect(() => {
-    if (mounted) localStorage.setItem(STORAGE_KEY, JSON.stringify(holdings));
-  }, [holdings, mounted]);
+    if (loaded && storageKey) localStorage.setItem(storageKey, JSON.stringify(holdings));
+  }, [holdings, loaded, storageKey]);
 
   // The set of coin ids we need prices for.
   const ids = useMemo(() => holdings.map((h) => h.id), [holdings]);
@@ -58,8 +71,8 @@ export default function PortfolioPage() {
 
   // Re-fetch prices when the set of held coins changes.
   useEffect(() => {
-    if (mounted) loadPrices(idsKey ? idsKey.split(",") : []);
-  }, [idsKey, mounted, loadPrices]);
+    if (loaded) loadPrices(idsKey ? idsKey.split(",") : []);
+  }, [idsKey, loaded, loadPrices]);
 
   // ----- mutations -----
   function addHolding(e) {
@@ -109,10 +122,19 @@ export default function PortfolioPage() {
   );
   const total24h = weighted.den > 0 ? weighted.num / weighted.den : null;
 
-  if (!mounted) {
+  // While auth state resolves or a non-authed user is being redirected.
+  if (!hydrated || !isAuthed) {
     return (
       <section className="container" style={{ paddingTop: 90 }}>
-        <Spinner label="Loading portfolio…" />
+        <Spinner label={hydrated ? "Redirecting to sign in…" : "Loading…"} />
+      </section>
+    );
+  }
+
+  if (!loaded) {
+    return (
+      <section className="container" style={{ paddingTop: 90 }}>
+        <Spinner label="Loading your portfolio…" />
       </section>
     );
   }
