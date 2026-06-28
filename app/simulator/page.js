@@ -29,6 +29,8 @@ export default function SimulatorPage() {
   const [stats, setStats] = useState({}); // index -> { attempts, elapsed, hps, done }
   const [showHelp, setShowHelp] = useState(false);
   const [showBtc, setShowBtc] = useState(false);
+  const [inspectorOpen, setInspectorOpen] = useState(false);
+  const [inspectBlock, setInspectBlock] = useState(0);
 
   const prefix = "0".repeat(difficulty);
 
@@ -124,6 +126,20 @@ export default function SimulatorPage() {
     setNonces(INITIAL.map(() => 0));
     setStats({});
   }
+
+  // ----- Hash Inspector derived values (for the selected block) -----
+  const sel = Math.min(inspectBlock, datas.length - 1);
+  const selPrev = sel === 0 ? GENESIS_PREV : hashes[sel - 1] || "";
+  const rawInput = blockString(sel, selPrev, nonces[sel], datas[sel]);
+  const encodedHex =
+    typeof window !== "undefined"
+      ? [...new TextEncoder().encode(rawInput)].map((b) => b.toString(16).padStart(2, "0")).join(" ")
+      : "";
+  const selHash = hashes[sel] || "";
+  const selZeros = selHash ? (selHash.match(/^0*/)?.[0].length ?? 0) : 0;
+  const binary4 = selHash
+    ? selHash.slice(0, 8).match(/.{2}/g).map((h) => parseInt(h, 16).toString(2).padStart(8, "0")).join(" ")
+    : "";
 
   return (
     <>
@@ -308,6 +324,102 @@ export default function SimulatorPage() {
               </div>
             );
           })}
+        </div>
+
+        {/* ===== Module 1 — Hash Inspector ===== */}
+        <div className="inspector-wrap">
+          <Button
+            variant="ghost"
+            className="full help-toggle"
+            aria-expanded={inspectorOpen}
+            aria-controls="hash-inspector"
+            onClick={() => setInspectorOpen((v) => !v)}
+          >
+            <span>🔬 Hash Inspector</span>
+            <span aria-hidden="true">{inspectorOpen ? "▲" : "▼"}</span>
+          </Button>
+
+          {inspectorOpen && (
+            <Card id="hash-inspector" role="region" aria-label="Hash inspector" className="inspector">
+              {/* tabs: one per block */}
+              <div className="inspector-tabs" role="tablist" aria-label="Select a block to inspect">
+                {datas.map((_, i) => (
+                  <button
+                    key={i}
+                    role="tab"
+                    aria-selected={sel === i}
+                    className={`insp-tab ${sel === i ? "active" : ""}`}
+                    onClick={() => setInspectBlock(i)}
+                  >
+                    {i === 0 ? "Genesis" : `Block ${i}`}
+                  </button>
+                ))}
+              </div>
+
+              <div className="insp-rows">
+                <div className="insp-row">
+                  <div className="insp-label">Raw SHA-256 Input</div>
+                  <div className="insp-value scroll">{rawInput}</div>
+                  <div className="insp-cap">
+                    The exact string that gets hashed — block index, data, previous hash, and nonce
+                    joined together.
+                  </div>
+                </div>
+
+                <div className="insp-row">
+                  <div className="insp-label">Encoded Input (UTF-8 Bytes)</div>
+                  <div className="insp-value scroll">{encodedHex || "…"}</div>
+                  <div className="insp-cap">
+                    SHA-256 works on bytes, so the input is first encoded as UTF-8, shown here in
+                    hexadecimal.
+                  </div>
+                </div>
+
+                <div className="insp-row">
+                  <div className="insp-label">Generated Hash</div>
+                  <div className={`insp-value ${selZeros >= difficulty ? "good" : ""}`}>{selHash || "…"}</div>
+                  <div className="insp-cap">
+                    The 256-bit SHA-256 digest of that input, written as 64 hexadecimal characters.
+                  </div>
+                </div>
+
+                <div className="insp-row">
+                  <div className="insp-label">Leading Zero Count</div>
+                  <div className="insp-value">{selZeros} zero{selZeros === 1 ? "" : "s"}</div>
+                  <div className="insp-cap">
+                    How many zeros the hash currently begins with. A valid block needs at least the
+                    difficulty target.
+                  </div>
+                </div>
+
+                <div className="insp-row">
+                  <div className="insp-label">Difficulty Target</div>
+                  <div className="insp-value">starts with &quot;{prefix}&quot; ({difficulty} zero{difficulty === 1 ? "" : "s"})</div>
+                  <div className="insp-cap">
+                    The mining goal — a hash counts as valid only when it starts with this many zeros.
+                  </div>
+                </div>
+
+                <div className="insp-row">
+                  <div className="insp-label">Hash Length</div>
+                  <div className="insp-value">64 hex chars · 256 bits</div>
+                  <div className="insp-cap">
+                    SHA-256 always outputs exactly 256 bits no matter how large the input is — that
+                    fixed size is part of why it&apos;s useful.
+                  </div>
+                </div>
+
+                <div className="insp-row">
+                  <div className="insp-label">Binary Representation (First 4 Bytes)</div>
+                  <div className="insp-value">{binary4 || "…"}</div>
+                  <div className="insp-cap">
+                    The same hash shown in binary. The real mining target is &quot;enough leading zero
+                    bits&quot;.
+                  </div>
+                </div>
+              </div>
+            </Card>
+          )}
         </div>
 
         <div className="callout">

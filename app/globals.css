@@ -362,6 +362,22 @@ a.card .more { color: var(--accent); font-weight: 700; font-size: .9rem; margin-
 @keyframes tip-in { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) { .infotip-pop { animation: none; } }
 
+/* ---------- Hash Inspector ---------- */
+.inspector-wrap { margin: 0 0 22px; }
+.inspector { margin-top: 14px; animation: help-in .25s var(--ease); }
+@media (prefers-reduced-motion: reduce) { .inspector { animation: none; } }
+.inspector-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+.insp-tab { cursor: pointer; font-family: inherit; font-size: .8rem; font-weight: 700; text-transform: uppercase; background: var(--bg); color: var(--text); border: 2px solid var(--brut); border-radius: 0; padding: 8px 14px; transition: .1s var(--ease); }
+.insp-tab:hover { box-shadow: 3px 3px 0 0 var(--brut); }
+.insp-tab.active { background: var(--accent); color: #000; }
+.insp-rows { display: grid; gap: 14px; }
+.insp-row { border: 2px solid var(--border); background: var(--bg-soft); padding: 12px 14px; }
+.insp-label { text-transform: uppercase; font-weight: 700; font-size: .72rem; letter-spacing: .05em; color: var(--accent-2); margin-bottom: 6px; }
+.insp-value { font-family: var(--mono); font-size: .82rem; word-break: break-all; color: var(--text); background: var(--bg); border: 2px solid var(--border); padding: 8px 10px; }
+.insp-value.good { color: var(--accent-2); }
+.insp-value.scroll { max-height: 120px; overflow: auto; }
+.insp-cap { margin-top: 8px; font-size: .76rem; color: var(--muted); line-height: 1.45; }
+
 /* ---------- Loading / skeleton ---------- */
 .spinner-wrap { display: flex; align-items: center; gap: 12px; color: var(--muted); text-transform: uppercase; font-weight: 700; }
 .spinner { width: 22px; height: 22px; border: 3px solid var(--border); border-top-color: var(--accent); animation: spin .8s linear infinite; display: inline-block; }
