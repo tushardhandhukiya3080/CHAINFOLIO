@@ -7,8 +7,9 @@ import { useAuth } from "@/context/AuthContext";
 
 const LINKS = [
   { href: "/", label: "Home" },
-  { href: "/dashboard", label: "Dashboard" },
-  { href: "/history", label: "History" },
+  { href: "/concepts", label: "Concepts" },
+  { href: "/prices", label: "Live Prices" },
+  { href: "/simulator", label: "Block Simulator" },
 ];
 
 export default function Navbar() {

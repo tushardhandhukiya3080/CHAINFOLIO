@@ -19,9 +19,10 @@ export default function Footer() {
           </div>
           <nav className="footer-cols">
             <div className="footer-col">
-              <span className="footer-h">Product</span>
-              <Link href="/dashboard">Dashboard</Link>
-              <Link href="/history">History</Link>
+              <span className="footer-h">Pages</span>
+              <Link href="/concepts">Concepts</Link>
+              <Link href="/prices">Live Prices</Link>
+              <Link href="/simulator">Block Simulator</Link>
             </div>
             <div className="footer-col">
               <span className="footer-h">Account</span>

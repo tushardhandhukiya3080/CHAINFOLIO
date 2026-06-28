@@ -2,37 +2,34 @@ import Link from "next/link";
 import Card from "@/components/Card";
 import Reveal from "@/components/Reveal";
 import Marquee from "@/components/Marquee";
-import ConnectWallet from "@/components/ConnectWallet";
 
+// Page 1 — Home / Landing. Theme: Blockchain / Web3 Introduction.
 export default function HomePage() {
   return (
     <>
-      {/* ===== Hero ===== */}
+      {/* ===== Hero / About ===== */}
       <header className="hero hero-xl">
-        <div className="bg-blobs" aria-hidden="true">
-          <span className="blob b1" />
-          <span className="blob b2" />
-        </div>
         <div className="container">
           <Reveal as="span" className="badge">
-            Crypto Portfolio &amp; Analytics Studio
+            Blockchain / Web3 Introduction
           </Reveal>
           <Reveal as="h1" className="display" delay={60}>
-            Track crypto
+            Understand the
             <br />
-            like a <span className="grad">studio</span>.
+            <span className="grad">blockchain</span>.
           </Reveal>
           <Reveal as="p" className="lead" delay={140}>
-            ChainFolio turns raw market data into a beautiful, real-time
-            dashboard. Live prices, portfolio analytics and on-chain history —
-            crafted with the precision of a design studio.
+            Web3 is a new kind of internet where data and value live on a shared,
+            tamper-evident ledger instead of one company&apos;s servers.
+            ChainFolio explains the core ideas — then lets you use them: compare
+            concepts, watch live prices, and mine your own blocks.
           </Reveal>
           <Reveal className="btn-row" delay={220}>
-            <Link className="btn primary lg" href="/signup">
-              Get started — it&apos;s free
+            <Link className="btn primary lg" href="/concepts">
+              Learn the concepts
             </Link>
-            <Link className="btn ghost lg" href="/dashboard">
-              Live demo →
+            <Link className="btn ghost lg" href="/simulator">
+              Try the simulator →
             </Link>
           </Reveal>
         </div>
@@ -40,29 +37,23 @@ export default function HomePage() {
 
       {/* ===== Marquee strip ===== */}
       <Marquee
-        items={[
-          "Real-time prices",
-          "Portfolio analytics",
-          "On-chain history",
-          "Wallet ready",
-          "Web3 native",
-        ]}
+        items={["Blockchain", "Web3", "Smart Contracts", "Decentralized", "On-chain"]}
       />
 
-      {/* ===== Features ===== */}
+      {/* ===== Features / Benefits (at least 3, with icons) ===== */}
       <section className="container">
         <Reveal as="h2" className="section-title big">
-          Built for the Web3 workflow
+          Why blockchain matters
         </Reveal>
         <Reveal as="p" className="section-sub" delay={60}>
-          The patterns a real dApp relies on — global state, real-time data and
-          clean data tables — crafted from scratch.
+          Three properties make blockchains different from the databases that run
+          today&apos;s web.
         </Reveal>
         <div className="grid cols-3">
           {[
-            { i: "🔌", t: "Connect once, everywhere", d: "Global wallet state means you connect once and every page instantly knows your address — even after a refresh." },
-            { i: "⚡", t: "Real-time data", d: "Live prices fetched with async/await, with graceful loading, success and error states. No frozen screens." },
-            { i: "📊", t: "Clean data tables", d: "Transaction history rendered from arrays of objects with instant filtering — exactly how on-chain data is handled." },
+            { i: "🔗", t: "Tamper-evident", d: "Each block is cryptographically linked to the one before it. Change a past record and every block after it breaks — so fraud is instantly visible." },
+            { i: "🌍", t: "Decentralized", d: "Thousands of independent computers hold the same copy of the data. No single company or government can quietly alter or shut it down." },
+            { i: "👁️", t: "Transparent", d: "Anyone can verify transactions and code for themselves. You trust math and open rules, not a middleman's promise." },
           ].map((f, idx) => (
             <Reveal key={f.t} delay={idx * 90}>
               <Card className="feature-card">
@@ -75,25 +66,33 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ===== Explore ===== */}
+      {/* ===== Explore the 3 other pages ===== */}
       <section className="container">
         <Reveal as="h2" className="section-title big">
-          Explore the studio
+          Explore the project
         </Reveal>
-        <div className="grid cols-2">
+        <div className="grid cols-3">
           <Reveal>
-            <Link className="card explore-card" href="/dashboard">
-              <div className="ico">📈</div>
-              <h3>Live Dashboard</h3>
-              <p>Real-time token prices and 24h changes from the CoinGecko API.</p>
+            <Link className="card explore-card" href="/concepts">
+              <div className="ico">🧠</div>
+              <h3>Concepts</h3>
+              <p>Side-by-side comparison cards for the fundamentals of Web3.</p>
               <span className="more">Open →</span>
             </Link>
           </Reveal>
           <Reveal delay={90}>
-            <Link className="card explore-card" href="/history">
-              <div className="ico">🧾</div>
-              <h3>Transaction History</h3>
-              <p>A filterable, responsive table of mock on-chain transactions.</p>
+            <Link className="card explore-card" href="/prices">
+              <div className="ico">📈</div>
+              <h3>Live Prices</h3>
+              <p>Real-time ETH &amp; BTC prices and 24h changes from CoinGecko.</p>
+              <span className="more">Open →</span>
+            </Link>
+          </Reveal>
+          <Reveal delay={180}>
+            <Link className="card explore-card" href="/simulator">
+              <div className="ico">⛏️</div>
+              <h3>Block Simulator</h3>
+              <p>Mine blocks, find a valid hash, and watch tampering break the chain.</p>
               <span className="more">Open →</span>
             </Link>
           </Reveal>
@@ -105,12 +104,12 @@ export default function HomePage() {
         <Reveal>
           <div className="cta-band">
             <div>
-              <h2 className="cta-title">Ready to track your portfolio?</h2>
-              <p className="cta-sub">Create a free account or connect a wallet to begin.</p>
+              <h2 className="cta-title">Ready to dig in?</h2>
+              <p className="cta-sub">Start with the concepts, or jump straight to mining a block.</p>
             </div>
             <div className="cta-actions">
-              <Link className="btn primary lg" href="/signup">Sign up</Link>
-              <ConnectWallet />
+              <Link className="btn primary lg" href="/concepts">Get started</Link>
+              <Link className="btn ghost lg" href="/prices">Live prices →</Link>
             </div>
           </div>
         </Reveal>
