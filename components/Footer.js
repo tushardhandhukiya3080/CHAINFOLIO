@@ -2,7 +2,10 @@ import Link from "next/link";
 
 // ▼▼▼ EDIT THESE to your own details ▼▼▼
 const AUTHOR = "Tushar Dhandhukiya";
-const GITHUB_URL = "https://github.com/tushardhandhukiya3080/CHAINFOLIO";
+const GITHUB_URL = "https://github.com/tushardhandhukiya3080";
+const REPO_URL = "https://github.com/tushardhandhukiya3080/CHAINFOLIO";
+const LINKEDIN_URL = "https://www.linkedin.com/in/tushar-dhandhukiya-b570b8368";
+const EMAIL = "officialog011@gmail.com";
 const BATCH = "Web3 Development Batch 2026";
 // ▲▲▲ ------------------------------- ▲▲▲
 
@@ -32,6 +35,9 @@ export default function Footer() {
             <div className="footer-col">
               <span className="footer-h">Connect</span>
               <a href={GITHUB_URL} target="_blank" rel="noreferrer">GitHub ↗</a>
+              <a href={LINKEDIN_URL} target="_blank" rel="noreferrer">LinkedIn ↗</a>
+              <a href={`mailto:${EMAIL}`}>Email ↗</a>
+              <a href={REPO_URL} target="_blank" rel="noreferrer">Repository ↗</a>
             </div>
           </nav>
         </div>
