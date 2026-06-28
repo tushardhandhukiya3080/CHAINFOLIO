@@ -230,6 +230,21 @@ a.card .more { color: var(--accent); font-weight: 700; font-size: .9rem; margin-
 .hash-out.bad { color: var(--danger); }
 .pill.bad { color: #000; background: var(--danger); }
 
+/* ---------- Portfolio ---------- */
+.holding-form { display: grid; grid-template-columns: 1.6fr 1fr auto; gap: 12px; align-items: end; margin-top: 8px; }
+.holding-form .field label { display: block; font-size: .74rem; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; font-weight: 700; letter-spacing: .05em; }
+.holding-form select, .holding-form input { width: 100%; background: var(--bg); border: 2px solid var(--brut); border-radius: 0; padding: 12px 14px; color: var(--text); font-family: inherit; font-size: .95rem; }
+.holding-form select:focus, .holding-form input:focus { outline: none; box-shadow: 4px 4px 0 0 var(--accent); }
+.holding-form .btn { height: 46px; }
+@media (max-width: 620px) { .holding-form { grid-template-columns: 1fr; } }
+.amount-input { width: 120px; background: var(--bg); border: 2px solid var(--brut); border-radius: 0; padding: 8px 10px; color: var(--text); font-family: var(--mono); font-size: .85rem; }
+.amount-input:focus { outline: none; box-shadow: 3px 3px 0 0 var(--accent); }
+.chg-up { color: var(--accent-2); font-weight: 700; }
+.chg-down { color: var(--danger); font-weight: 700; }
+.empty-state { text-align: center; }
+.empty-state h3 { text-transform: uppercase; }
+.linklike { background: none; border: 0; color: var(--accent); font-weight: 700; cursor: pointer; text-transform: uppercase; font-family: inherit; }
+
 /* ---------- Loading / skeleton ---------- */
 .spinner-wrap { display: flex; align-items: center; gap: 12px; color: var(--muted); text-transform: uppercase; font-weight: 700; }
 .spinner { width: 22px; height: 22px; border: 3px solid var(--border); border-top-color: var(--accent); animation: spin .8s linear infinite; display: inline-block; }
