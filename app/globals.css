@@ -178,6 +178,12 @@ a.card { text-decoration: none; display: block; }
 a.card .more { color: var(--accent); font-weight: 700; font-size: .9rem; margin-top: 16px; display: inline-block; text-transform: uppercase; }
 .explore-card { padding: 36px; }
 
+/* Equal-height cards in a row, with CTAs aligned to the bottom (symmetry). */
+.grid > .reveal { display: flex; }
+.grid > .reveal > * { width: 100%; }
+.grid .card { display: flex; flex-direction: column; height: 100%; }
+.grid a.card .more { margin-top: auto; padding-top: 16px; }
+
 /* ---------- CTA band ---------- */
 .cta-band {
   background: var(--card); border: 2px solid var(--brut); border-radius: 0; padding: 44px;
