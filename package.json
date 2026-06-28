@@ -1,13 +1,12 @@
 {
-  "name": "web3-foundations",
+  "name": "chainfolio",
   "version": "1.0.0",
   "private": true,
-  "description": "A multi-page Next.js site teaching Cryptocurrency & Wallets, with a live Connect Wallet demo.",
+  "description": "ChainFolio — an educational Web3 portfolio & analytics app (Next.js): blockchain concepts, live CoinGecko prices, a proof-of-work simulator, wallet connection, and a personal portfolio.",
   "scripts": {
     "dev": "next dev",
     "build": "next build --webpack",
     "start": "next start",
-    "lint": "next lint",
     "test": "vitest run"
   },
   "dependencies": {
