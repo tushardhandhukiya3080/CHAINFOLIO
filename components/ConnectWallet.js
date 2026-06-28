@@ -20,7 +20,18 @@ export default function ConnectWallet() {
   // Avoid SSR/client hydration mismatch: only render wallet state after mount.
   const [mounted, setMounted] = useState(false);
   const [err, setErr] = useState("");
+  const [menuOpen, setMenuOpen] = useState(false);
   useEffect(() => setMounted(true), []);
+
+  // Close the wallet dropdown when clicking outside of it.
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onClick = (e) => {
+      if (!e.target.closest?.(".wallet-menu")) setMenuOpen(false);
+    };
+    document.addEventListener("click", onClick);
+    return () => document.removeEventListener("click", onClick);
+  }, [menuOpen]);
 
   const { address, isConnected } = useAccount();
   const chainId = useChainId();
@@ -90,19 +101,42 @@ export default function ConnectWallet() {
     );
   }
 
-  // --- Connected ---
+  // --- Connected --- single pill + dropdown (keeps the navbar on one line)
   const bal = balance
     ? `${Number(balance.formatted).toFixed(3)} ${balance.symbol}`
     : "…";
 
   return (
-    <div className="wallet-chip">
-      <span className="pill ok" title={`${address}\nBalance: ${bal}`}>
+    <div className="wallet-menu">
+      <button
+        className="pill ok wallet-pill"
+        onClick={() => setMenuOpen((o) => !o)}
+        title={address}
+      >
         🟢 {shortAddress(address)} · {bal}
-      </span>
-      <Button variant="ghost" className="sm" onClick={() => disconnect()}>
-        Disconnect
-      </Button>
+      </button>
+      {menuOpen && (
+        <div className="wallet-dropdown">
+          <div className="wd-row">
+            <span>Address</span>
+            <span className="mono">{shortAddress(address)}</span>
+          </div>
+          <div className="wd-row">
+            <span>Balance</span>
+            <span className="mono">{bal}</span>
+          </div>
+          <Button
+            variant="ghost"
+            className="sm full"
+            onClick={() => {
+              disconnect();
+              setMenuOpen(false);
+            }}
+          >
+            Disconnect
+          </Button>
+        </div>
+      )}
     </div>
   );
 }
