@@ -30,6 +30,23 @@
   --mono:      "Consolas", "SF Mono", monospace;
 }
 
+/* Light theme — overrides the tokens; brutalism stays (black borders/shadows). */
+:root[data-theme="light"] {
+  --bg:        #f5f5ee;
+  --bg-soft:   #eaeae0;
+  --card:      #ffffff;
+  --card-2:    #f0f0e6;
+  --text:      #0a0a0a;
+  --muted:     #5a5a52;
+  --brut:      #0a0a0a;
+  --border:    #d4d4c8;
+  --accent:    #b6e000;
+  --accent-2:  #0a9e8c;
+  --accent-3:  #e06a1a;
+  --danger:    #d6313f;
+  --warn:      #b97f00;
+}
+
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 body {
@@ -91,6 +108,8 @@ section { padding: 60px 0; }
 .nav-login { color: var(--text); text-decoration: none; font-size: .92rem; font-weight: 700; text-transform: uppercase; }
 .nav-login:hover { color: var(--accent); }
 .user-chip { font-weight: 700; font-size: .9rem; padding: 6px 12px; background: var(--card-2); border: 2px solid var(--brut); text-transform: uppercase; }
+.theme-toggle { background: var(--bg); color: var(--text); border: 2px solid var(--brut); border-radius: 0; width: 38px; height: 38px; cursor: pointer; font-size: 1rem; line-height: 1; flex: 0 0 auto; }
+.theme-toggle:hover { box-shadow: 3px 3px 0 0 var(--brut); }
 
 @media (max-width: 860px) {
   .nav-toggle { display: block; }

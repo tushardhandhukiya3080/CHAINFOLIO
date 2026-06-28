@@ -3,7 +3,7 @@ import Link from "next/link";
 // ▼▼▼ EDIT THESE to your own details ▼▼▼
 const AUTHOR = "Tushar Dhandhukiya";
 const GITHUB_URL = "https://github.com/tushardhandhukiya3080/CHAINFOLIO";
-const BATCH = "Your Batch Name";
+const BATCH = "Web3 Development Batch 2026";
 // ▲▲▲ ------------------------------- ▲▲▲
 
 export default function Footer() {

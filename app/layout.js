@@ -26,6 +26,15 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className={ganey.variable}>
+      <head>
+        {/* Apply saved theme before paint to avoid a flash of the wrong theme. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "try{document.documentElement.dataset.theme=localStorage.getItem('chainfolio_theme')||'dark'}catch(e){document.documentElement.dataset.theme='dark'}",
+          }}
+        />
+      </head>
       <body>
         <Web3Provider>
           <AuthProvider>

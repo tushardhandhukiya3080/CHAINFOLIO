@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import ConnectWallet from "./ConnectWallet";
+import ThemeToggle from "./ThemeToggle";
 
 const LINKS = [
   { href: "/", label: "Home" },
@@ -50,6 +51,7 @@ export default function Navbar() {
           </ul>
 
           <div className="nav-auth">
+            <ThemeToggle />
             <ConnectWallet />
           </div>
         </div>
