@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart Contracts &amp; dApps — Web3 Foundations</title>
+  <meta name="description" content="Ethereum, Solidity, smart contracts, and decentralized applications (dApps) explained for beginners." />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <nav class="nav">
+    <div class="container">
+      <div class="brand"><span class="dot"></span> Web3 Foundations</div>
+      <button class="nav-toggle" aria-label="Toggle menu">☰</button>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="blockchain.html">Blockchain</a></li>
+        <li><a href="cryptocurrency.html">Crypto &amp; Wallets</a></li>
+        <li><a href="smart-contracts.html">Smart Contracts</a></li>
+        <li><a href="ecosystem.html">NFTs, DeFi &amp; DAOs</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="container">
+      <span class="badge">Module 3</span>
+      <h1>Smart Contracts <span class="grad">&amp; dApps</span></h1>
+      <p class="lead">
+        This is where blockchains go from "digital money" to "programmable
+        money." Smart contracts let you put agreements into code that runs
+        exactly as written — with no middleman.
+      </p>
+    </div>
+  </header>
+
+  <section class="container prose">
+    <h2 class="section-title">What is a smart contract?</h2>
+    <p>
+      A <strong>smart contract</strong> is a program stored on the blockchain
+      that runs automatically when conditions are met. Think of a vending
+      machine: insert the right amount, and it <em>guarantees</em> you get the
+      snack — no cashier needed. Smart contracts do that for digital agreements.
+    </p>
+    <div class="deflist">
+      <div class="term"><b>Automatic</b> — executes itself when triggered; no human approval step.</div>
+      <div class="term"><b>Immutable</b> — once deployed, the code generally can't be changed (so bugs are costly).</div>
+      <div class="term"><b>Transparent</b> — anyone can read the code and verify what it does.</div>
+      <div class="term"><b>Trustless</b> — you trust the code, not the counterparty.</div>
+    </div>
+  </section>
+
+  <section class="container prose">
+    <h2 class="section-title">Ethereum &amp; Solidity</h2>
+    <p>
+      <strong>Ethereum</strong> was the first blockchain built to run smart
+      contracts. It acts like a giant shared "world computer" called the
+      <strong>EVM</strong> (Ethereum Virtual Machine). The most popular language
+      for writing these contracts is <strong>Solidity</strong>.
+    </p>
+    <p>Here's a tiny Solidity contract — read the comments to follow along:</p>
+    <pre class="code-block"><span class="cm">// A simple contract that stores a number anyone can read or update</span>
+pragma solidity ^0.8.0;
+
+contract SimpleStorage {
+    uint256 public storedNumber;   <span class="cm">// state saved on-chain</span>
+
+    <span class="cm">// "set" changes the value (costs gas — it writes to the chain)</span>
+    function set(uint256 _number) public {
+        storedNumber = _number;
+    }
+
+    <span class="cm">// "get" just reads the value (free — no state change)</span>
+    function get() public view returns (uint256) {
+        return storedNumber;
+    }
+}</pre>
+    <div class="callout"><strong>Why it matters:</strong> Once deployed, this code lives forever on Ethereum. Anyone, anywhere can call <code>set</code> and <code>get</code> — no server, no company, no downtime.</div>
+  </section>
+
+  <section class="container prose">
+    <h2 class="section-title">From contracts to dApps</h2>
+    <p>
+      A <strong>dApp</strong> (decentralized application) is a normal-looking app
+      whose backend logic runs on smart contracts instead of a company's
+      servers. The pieces:
+    </p>
+    <div class="grid cols-3">
+      <div class="card">
+        <div class="ico">🖥️</div>
+        <h3>Frontend</h3>
+        <p>A regular website (HTML/CSS/JS or React) — exactly the skills you're practicing now.</p>
+      </div>
+      <div class="card">
+        <div class="ico">🔌</div>
+        <h3>Wallet connection</h3>
+        <p>Libraries like <b>ethers.js</b> or <b>web3.js</b> let the site talk to the user's wallet (e.g. MetaMask).</p>
+      </div>
+      <div class="card">
+        <div class="ico">📜</div>
+        <h3>Smart contracts</h3>
+        <p>The on-chain "backend" that stores data and enforces the rules.</p>
+      </div>
+    </div>
+    <div class="callout">
+      <strong>This is your bridge to real Web3 dev:</strong> the front end of a
+      dApp is just a website like the ones on this site. Add a wallet connection
+      and a few contract calls, and you've built a dApp.
+    </div>
+  </section>
+
+  <section class="container prose">
+    <h2 class="section-title">Real-world uses</h2>
+    <ul>
+      <li><strong>DeFi</strong> — lending, trading, and earning interest without banks.</li>
+      <li><strong>NFTs</strong> — provable ownership of digital art, tickets, and items.</li>
+      <li><strong>DAOs</strong> — communities that vote on and run shared treasuries via code.</li>
+      <li><strong>Supply chain &amp; identity</strong> — tamper-proof records of where things came from.</li>
+    </ul>
+    <p style="color:var(--muted)">You'll meet the first three in detail on the next page.</p>
+  </section>
+
+  <nav class="container pagenav">
+    <a class="btn ghost" href="cryptocurrency.html">← Crypto &amp; Wallets</a>
+    <a class="btn primary" href="ecosystem.html">Next: NFTs, DeFi &amp; DAOs →</a>
+  </nav>
+
+  <footer>
+    <div class="container">
+      <span>Web3 Foundations · Module 3</span>
+      <span>Code sample is for learning — always audit contracts before deploying.</span>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

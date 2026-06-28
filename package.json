@@ -1,0 +1,17 @@
+{
+  "name": "web3-foundations",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A multi-page Next.js site teaching Cryptocurrency & Wallets, with a live Connect Wallet demo.",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "next": "^16.2.9",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7"
+  }
+}

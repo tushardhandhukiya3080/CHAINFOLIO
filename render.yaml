@@ -1,0 +1,12 @@
+# Render Blueprint — deploys ChainFolio as a Next.js web service.
+# In Render: New → Blueprint → connect this repo, and it auto-configures.
+services:
+  - type: web
+    name: chainfolio
+    runtime: node
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npm run start
+    envVars:
+      - key: NODE_VERSION
+        value: "22"

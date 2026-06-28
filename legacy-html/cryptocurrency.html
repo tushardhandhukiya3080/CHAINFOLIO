@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cryptocurrency &amp; Wallets — Web3 Foundations</title>
+  <meta name="description" content="Coins vs tokens, public and private keys, wallets, transactions, and gas fees explained simply." />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <nav class="nav">
+    <div class="container">
+      <div class="brand"><span class="dot"></span> Web3 Foundations</div>
+      <button class="nav-toggle" aria-label="Toggle menu">☰</button>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="blockchain.html">Blockchain</a></li>
+        <li><a href="cryptocurrency.html">Crypto &amp; Wallets</a></li>
+        <li><a href="smart-contracts.html">Smart Contracts</a></li>
+        <li><a href="ecosystem.html">NFTs, DeFi &amp; DAOs</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="container">
+      <span class="badge">Module 2</span>
+      <h1>Cryptocurrency <span class="grad">&amp; Wallets</span></h1>
+      <p class="lead">
+        If blockchain is the ledger, cryptocurrency is the money written into it.
+        Here's how value moves — and how you prove it's yours without a bank.
+      </p>
+    </div>
+  </header>
+
+  <section class="container prose">
+    <h2 class="section-title">Coins vs. Tokens</h2>
+    <p>People use these interchangeably, but there's a real difference:</p>
+    <div class="deflist">
+      <div class="term"><b>Coin</b> — the native currency of its own blockchain. Examples: <strong>BTC</strong> on Bitcoin, <strong>ETH</strong> on Ethereum. Used to pay network fees.</div>
+      <div class="term"><b>Token</b> — built on top of an existing blockchain using a smart contract. Examples: <strong>USDC</strong>, <strong>UNI</strong> live on Ethereum. They piggyback on ETH's security.</div>
+    </div>
+  </section>
+
+  <section class="container prose">
+    <h2 class="section-title">Public &amp; Private Keys — the heart of ownership</h2>
+    <p>
+      A crypto wallet doesn't actually "store coins." The coins live on the
+      blockchain. Your wallet stores the <strong>keys</strong> that prove you
+      control them. There are two, and the relationship is everything:
+    </p>
+    <div class="grid cols-2">
+      <div class="card">
+        <div class="ico">📬</div>
+        <h3>Public key / address</h3>
+        <p>Like your email address or account number. Share it freely so people can send you funds.</p>
+      </div>
+      <div class="card">
+        <div class="ico">🔐</div>
+        <h3>Private key</h3>
+        <p>Like the password <em>and</em> signature combined. It proves ownership and authorizes transactions. <strong>Never share it.</strong></p>
+      </div>
+    </div>
+    <div class="callout">
+      <strong>"Not your keys, not your coins."</strong> Whoever holds the private
+      key controls the funds — period. Lose it and the coins are gone forever;
+      leak it and they can be stolen. There is no "forgot password" button.
+    </div>
+
+    <h3>Seed phrase (recovery phrase)</h3>
+    <p>
+      Because raw private keys are unwieldy, wallets give you a <strong>12–24 word
+      seed phrase</strong> that can regenerate all your keys. Write it on paper,
+      store it offline, and never type it into a website. Anyone with these words
+      owns your wallet.
+    </p>
+  </section>
+
+  <section class="container prose">
+    <h2 class="section-title">Types of wallets</h2>
+    <div class="grid cols-2">
+      <div class="card">
+        <h3>🔥 Hot wallet</h3>
+        <p>Connected to the internet (e.g. MetaMask browser extension, mobile apps). Convenient for daily use, more exposed to hacks.</p>
+      </div>
+      <div class="card">
+        <h3>❄️ Cold wallet</h3>
+        <p>Offline hardware device (e.g. Ledger, Trezor) or paper. Much safer for large, long-term holdings.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="container prose">
+    <h2 class="section-title">Anatomy of a transaction</h2>
+    <p>When you send crypto, here's what actually happens:</p>
+    <ul>
+      <li><strong>1. Create</strong> — you specify recipient address + amount.</li>
+      <li><strong>2. Sign</strong> — your wallet signs it with your private key (proving it's really you) without ever revealing the key.</li>
+      <li><strong>3. Broadcast</strong> — the signed transaction is sent to the network.</li>
+      <li><strong>4. Validate &amp; confirm</strong> — validators/miners verify it and include it in a block. Once it's deep enough in the chain, it's irreversible.</li>
+    </ul>
+
+    <h3>What is "gas"?</h3>
+    <p>
+      <strong>Gas</strong> is the fee you pay to have the network process your
+      transaction. It compensates the validators for computation and storage.
+      Fees rise when the network is busy (more demand for limited block space) —
+      like surge pricing. On Ethereum, gas is paid in <strong>ETH</strong>
+      (often measured in tiny units called <em>gwei</em>).
+    </p>
+    <div class="callout"><strong>Beginner gotcha:</strong> You need a little of the chain's native coin (ETH, etc.) to pay gas — even just to <em>move</em> a token like USDC.</div>
+  </section>
+
+  <nav class="container pagenav">
+    <a class="btn ghost" href="blockchain.html">← Blockchain</a>
+    <a class="btn primary" href="smart-contracts.html">Next: Smart Contracts →</a>
+  </nav>
+
+  <footer>
+    <div class="container">
+      <span>Web3 Foundations · Module 2</span>
+      <span>Educational content only — not financial advice.</span>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

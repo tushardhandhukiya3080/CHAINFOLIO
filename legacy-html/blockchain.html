@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blockchain Basics — Web3 Foundations</title>
+  <meta name="description" content="Learn what a blockchain is: blocks, hashing, decentralization, and consensus — with live interactive demos." />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <nav class="nav">
+    <div class="container">
+      <div class="brand"><span class="dot"></span> Web3 Foundations</div>
+      <button class="nav-toggle" aria-label="Toggle menu">☰</button>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="blockchain.html">Blockchain</a></li>
+        <li><a href="cryptocurrency.html">Crypto &amp; Wallets</a></li>
+        <li><a href="smart-contracts.html">Smart Contracts</a></li>
+        <li><a href="ecosystem.html">NFTs, DeFi &amp; DAOs</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="container">
+      <span class="badge">Module 1</span>
+      <h1>Blockchain <span class="grad">Basics</span></h1>
+      <p class="lead">
+        A blockchain is a shared, append-only record book that thousands of
+        computers keep in sync — with no boss in charge. Let's see how it stays
+        trustworthy without anyone to trust.
+      </p>
+    </div>
+  </header>
+
+  <!-- ===== Core concepts ===== -->
+  <section class="container prose">
+    <h2 class="section-title">What is a blockchain?</h2>
+    <p>
+      Imagine a notebook that records transactions. Instead of one person owning
+      it, <strong>everyone in the network has an identical copy</strong>. When a
+      new page (a <strong>block</strong>) is added, every copy updates. Because
+      the pages are mathematically chained together, you can't secretly rip one
+      out or edit it — that's what makes a blockchain <strong>tamper-evident</strong>.
+    </p>
+
+    <div class="deflist">
+      <div class="term"><b>Block</b> — a bundle of data (e.g. transactions) plus a timestamp and a reference to the previous block.</div>
+      <div class="term"><b>Hash</b> — a fixed-length digital fingerprint of data. Change the data even slightly and the hash changes completely.</div>
+      <div class="term"><b>Chain</b> — each block stores the hash of the one before it, linking them into an ordered, unbreakable sequence.</div>
+      <div class="term"><b>Decentralization</b> — no single server or company holds the data; it's distributed across many independent nodes.</div>
+      <div class="term"><b>Consensus</b> — the rules nodes use to agree on which blocks are valid (e.g. Proof of Work, Proof of Stake).</div>
+    </div>
+
+    <div class="callout">
+      <strong>Key idea:</strong> Trust in Web3 doesn't come from a company —
+      it comes from math (hashing) and economics (consensus incentives).
+    </div>
+  </section>
+
+  <!-- ===== Hashing demo ===== -->
+  <section class="container">
+    <h2 class="section-title">Demo 1 — Hashing in action</h2>
+    <p class="section-sub">
+      Type anything below. You're running real <b>SHA-256</b> — the exact hash
+      family Bitcoin uses — right in your browser. Notice how one tiny change
+      rewrites the entire fingerprint.
+    </p>
+    <div class="demo">
+      <label for="hash-input">Input data</label>
+      <textarea id="hash-input">Hello, Web3!</textarea>
+      <label>SHA-256 hash</label>
+      <div id="hash-output" class="hash-out"></div>
+    </div>
+  </section>
+
+  <!-- ===== Mini blockchain demo ===== -->
+  <section class="container">
+    <h2 class="section-title">Demo 2 — Why tampering is obvious</h2>
+    <p class="section-sub">
+      Each block's hash is built from its data <em>and the previous block's hash</em>.
+      Try editing the data in Block&nbsp;1 — watch it and every block after it turn
+      <span style="color:#ff5d6c">red</span>, because the chain no longer adds up.
+    </p>
+
+    <div class="chain" id="chain">
+      <div class="block valid">
+        <div class="row"><span>Block #0 (Genesis)</span></div>
+        <textarea class="block-data" rows="2">First block</textarea>
+        <div class="row"><span>prev:</span> <span class="prev-hash hashline">—</span></div>
+        <div class="row"><span>hash:</span> <span class="hash-value hashline good">—</span></div>
+      </div>
+      <div class="block valid">
+        <div class="row"><span>Block #1</span></div>
+        <textarea class="block-data" rows="2">Alice pays Bob 5 coins</textarea>
+        <div class="row"><span>prev:</span> <span class="prev-hash hashline">—</span></div>
+        <div class="row"><span>hash:</span> <span class="hash-value hashline good">—</span></div>
+      </div>
+      <div class="block valid">
+        <div class="row"><span>Block #2</span></div>
+        <textarea class="block-data" rows="2">Bob pays Carol 2 coins</textarea>
+        <div class="row"><span>prev:</span> <span class="prev-hash hashline">—</span></div>
+        <div class="row"><span>hash:</span> <span class="hash-value hashline good">—</span></div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <strong>That red cascade</strong> is the whole security model in one picture.
+      To fake a transaction, an attacker would have to recompute every following
+      block faster than the entire network — practically impossible.
+    </div>
+  </section>
+
+  <!-- ===== Consensus ===== -->
+  <section class="container prose">
+    <h2 class="section-title">How does everyone agree? (Consensus)</h2>
+    <p>If thousands of computers each hold a copy, how do they agree on the next block? Through a <strong>consensus mechanism</strong>:</p>
+    <ul>
+      <li><strong>Proof of Work (PoW)</strong> — miners race to solve a hard math puzzle. Winner adds the block and earns a reward. Secure but energy-hungry. (Bitcoin)</li>
+      <li><strong>Proof of Stake (PoS)</strong> — validators lock up ("stake") their coins for the right to add blocks. Cheat and you lose your stake. Far more energy-efficient. (Ethereum, since 2022)</li>
+    </ul>
+    <div class="callout"><strong>Trade-off to remember:</strong> Blockchains balance the "trilemma" of <b>decentralization</b>, <b>security</b>, and <b>scalability</b> — improving one often pressures the others.</div>
+  </section>
+
+  <nav class="container pagenav">
+    <a class="btn ghost" href="index.html">← Home</a>
+    <a class="btn primary" href="cryptocurrency.html">Next: Crypto &amp; Wallets →</a>
+  </nav>
+
+  <footer>
+    <div class="container">
+      <span>Web3 Foundations · Module 1</span>
+      <span>Demos run 100% in your browser — no data leaves your machine.</span>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
