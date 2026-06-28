@@ -245,6 +245,18 @@ a.card .more { color: var(--accent); font-weight: 700; font-size: .9rem; margin-
 .empty-state h3 { text-transform: uppercase; }
 .linklike { background: none; border: 0; color: var(--accent); font-weight: 700; cursor: pointer; text-transform: uppercase; font-family: inherit; }
 
+/* ---------- Live Prices (markets table) ---------- */
+.prices-controls { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-bottom: 18px; }
+.search-input, .fiat-select { background: var(--bg); border: 2px solid var(--brut); border-radius: 0; padding: 11px 14px; color: var(--text); font-family: inherit; font-size: .92rem; }
+.search-input { flex: 1; min-width: 180px; }
+.search-input:focus, .fiat-select:focus { outline: none; box-shadow: 4px 4px 0 0 var(--accent); }
+.fiat-select { cursor: pointer; font-weight: 700; }
+.markets-table th.sortable { cursor: pointer; user-select: none; white-space: nowrap; }
+.markets-table th.sortable:hover { color: #1a1a1a; }
+.coin-cell { display: flex; align-items: center; gap: 10px; }
+.coin-logo { border: 2px solid var(--brut); flex: 0 0 auto; }
+.spark { display: block; }
+
 /* ---------- Loading / skeleton ---------- */
 .spinner-wrap { display: flex; align-items: center; gap: 12px; color: var(--muted); text-transform: uppercase; font-weight: 700; }
 .spinner { width: 22px; height: 22px; border: 3px solid var(--border); border-top-color: var(--accent); animation: spin .8s linear infinite; display: inline-block; }
