@@ -480,6 +480,7 @@ a.card .more { color: var(--accent); font-weight: 700; font-size: .9rem; margin-
 .muted-cell { color: var(--muted); }
 .empty-row { text-align: center; color: var(--muted); padding: 34px; text-transform: uppercase; }
 .table-foot { padding: 14px 18px; color: var(--muted); font-size: .82rem; border-top: 2px solid var(--brut); text-transform: uppercase; }
+.load-more-foot { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
 .tx-status { display: inline-block; padding: 4px 12px; border-radius: 0; font-size: .76rem; font-weight: 700; text-transform: uppercase; border: 2px solid var(--brut); color: #000; }
 .tx-status.success { background: var(--accent-2); }
 .tx-status.failed  { background: var(--danger); }

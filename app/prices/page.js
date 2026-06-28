@@ -13,6 +13,8 @@ const STATE = { LOADING: "loading", SUCCESS: "success", ERROR: "error" };
 const CURRENCIES = ["usd", "eur", "inr"];
 const CACHE_TTL = 60_000; // 1 min — be gentle with the free API
 const COOLDOWN = 8_000; // debounce manual refresh
+const PER_PAGE = 250; // CoinGecko's max page size
+const MAX_PAGES = 4; // up to 1,000 coins — keeps the UI responsive & within rate limits
 
 const cacheKey = (vs) => `chainfolio_markets_${vs}`;
 function readCache(vs) {
@@ -42,6 +44,8 @@ export default function PricesPage() {
   const [sortKey, setSortKey] = useState("rank"); // rank | price | change | mcap
   const [sortDir, setSortDir] = useState("asc");
   const [selected, setSelected] = useState(null); // coin whose live chart is open
+  const [page, setPage] = useState(1); // how many 250-coin pages are loaded
+  const [loadingMore, setLoadingMore] = useState(false);
 
   const coolTimer = useRef(null);
 
@@ -62,8 +66,9 @@ export default function PricesPage() {
     setStatus(cached ? STATE.SUCCESS : STATE.LOADING);
 
     try {
-      const data = await fetchMarkets(vs, 20);
+      const data = await fetchMarkets(vs, PER_PAGE, 1);
       setCoins(data);
+      setPage(1);
       writeCache(vs, data);
       setUpdatedAt(new Date().toLocaleTimeString());
       setStatus(STATE.SUCCESS);
@@ -95,6 +100,30 @@ export default function PricesPage() {
     coolTimer.current = setTimeout(() => setCooling(false), COOLDOWN);
   }
   useEffect(() => () => clearTimeout(coolTimer.current), []);
+
+  // Fetch the next 250-coin page and append it.
+  async function loadMore() {
+    if (loadingMore || page >= MAX_PAGES) return;
+    setLoadingMore(true);
+    setNotice("");
+    try {
+      const next = await fetchMarkets(currency, PER_PAGE, page + 1);
+      // De-dupe by id in case of any overlap.
+      setCoins((prev) => {
+        const seen = new Set(prev.map((c) => c.id));
+        return [...prev, ...next.filter((c) => !seen.has(c.id))];
+      });
+      setPage((p) => p + 1);
+    } catch (e) {
+      setNotice(
+        e?.message === "RATE_LIMIT"
+          ? "Rate-limited by CoinGecko — wait a moment before loading more."
+          : "Couldn't load more coins."
+      );
+    } finally {
+      setLoadingMore(false);
+    }
+  }
 
   function toggleSort(key) {
     if (sortKey === key) setSortDir((d) => (d === "asc" ? "desc" : "asc"));
@@ -132,8 +161,8 @@ export default function PricesPage() {
             Live <span className="grad">prices</span>
           </h1>
           <p className="lead">
-            Top 20 coins by market cap with 7-day trends — fetched from the free
-            CoinGecko API. Search, sort, and switch currency.
+            Coins ranked by market cap with 7-day trends — fetched from the free
+            CoinGecko API. Search, sort, switch currency, and load more.
           </p>
         </div>
       </header>
@@ -239,8 +268,15 @@ export default function PricesPage() {
                 </tbody>
               </table>
             </div>
-            <div className="table-foot">
-              Showing {rows.length} of {coins.length} coins · prices in {currency.toUpperCase()}
+            <div className="table-foot load-more-foot">
+              <span>
+                Showing {rows.length} of {coins.length} loaded coins · prices in {currency.toUpperCase()}
+              </span>
+              {page < MAX_PAGES && (
+                <Button variant="ghost" className="sm" onClick={loadMore} disabled={loadingMore}>
+                  {loadingMore ? "Loading…" : `Load more (+${PER_PAGE})`}
+                </Button>
+              )}
             </div>
           </Card>
         )}
