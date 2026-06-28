@@ -83,6 +83,22 @@ section { padding: 60px 0; }
 /* brutalist "gradient" = solid accent, no smooth blends */
 .grad { color: var(--accent); background: none; -webkit-text-fill-color: var(--accent); }
 
+/* ---------- Preloader (counts 1 → 100) ---------- */
+.loader-overlay {
+  position: fixed; inset: 0; z-index: 9999;
+  background: var(--bg);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  transition: opacity .5s var(--ease);
+  background-image:
+    linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+.loader-overlay.fade { opacity: 0; pointer-events: none; }
+.loader-count { font-family: var(--font-disp); font-weight: 700; line-height: 1; font-size: clamp(4rem, 18vw, 12rem); }
+.loader-label { margin-top: 14px; text-transform: uppercase; letter-spacing: .3em; color: var(--muted); font-size: .8rem; font-weight: 700; }
+.loader-bar { position: absolute; bottom: 0; left: 0; height: 6px; background: var(--accent); transition: width .08s linear; }
+
 /* ---------- Reveal on scroll ---------- */
 .reveal { opacity: 0; transform: translateY(20px); transition: opacity .45s var(--ease), transform .45s var(--ease); }
 .reveal.in { opacity: 1; transform: none; }

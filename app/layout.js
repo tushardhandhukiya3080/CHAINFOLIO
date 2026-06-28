@@ -4,6 +4,7 @@ import Web3Provider from "@/components/Web3Provider";
 import { AuthProvider } from "@/context/AuthContext";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import Loader from "@/components/Loader";
 
 // GANEY — the single, project-wide font (self-hosted variable font).
 // Swap fonts/Ganey.woff2 for a real GANEY file later and nothing else changes.
@@ -38,6 +39,7 @@ export default function RootLayout({ children }) {
       <body>
         <Web3Provider>
           <AuthProvider>
+            <Loader />
             <Navbar />
             <main>{children}</main>
             <Footer />
