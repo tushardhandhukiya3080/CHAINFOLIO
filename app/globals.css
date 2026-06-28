@@ -99,19 +99,19 @@ section { padding: 60px 0; }
 .brand .dot { width: 14px; height: 14px; background: var(--accent); border: 2px solid var(--brut); }
 .brand-reg { font-size: .7em; color: var(--muted); }
 .nav-toggle { display: none; background: none; border: 2px solid var(--brut); color: var(--text); font-size: 1.1rem; cursor: pointer; padding: 4px 10px; }
-.nav-right { display: flex; align-items: center; gap: 22px; }
-.nav-links { display: flex; gap: 4px; list-style: none; margin: 0; padding: 0; }
-.nav-links a { color: var(--text); text-decoration: none; padding: 7px 14px; font-size: .92rem; font-weight: 600; text-transform: uppercase; border: 2px solid transparent; transition: .12s var(--ease); }
+.nav-right { display: flex; align-items: center; gap: 16px; }
+.nav-links { display: flex; gap: 2px; list-style: none; margin: 0; padding: 0; }
+.nav-links a { color: var(--text); text-decoration: none; padding: 7px 12px; font-size: .88rem; font-weight: 600; text-transform: uppercase; border: 2px solid transparent; transition: .12s var(--ease); white-space: nowrap; }
 .nav-links a:hover { border-color: var(--brut); }
 .nav-links a.active { background: var(--accent); color: #000; border-color: var(--brut); }
-.nav-auth { display: flex; align-items: center; gap: 12px; }
+.nav-auth { display: flex; align-items: center; gap: 10px; }
 .nav-login { color: var(--text); text-decoration: none; font-size: .92rem; font-weight: 700; text-transform: uppercase; }
 .nav-login:hover { color: var(--accent); }
 .user-chip { font-weight: 700; font-size: .9rem; padding: 6px 12px; background: var(--card-2); border: 2px solid var(--brut); text-transform: uppercase; }
 .theme-toggle { background: var(--bg); color: var(--text); border: 2px solid var(--brut); border-radius: 0; width: 38px; height: 38px; cursor: pointer; font-size: 1rem; line-height: 1; flex: 0 0 auto; }
 .theme-toggle:hover { box-shadow: 3px 3px 0 0 var(--brut); }
 
-@media (max-width: 860px) {
+@media (max-width: 1040px) {
   .nav-toggle { display: block; }
   .nav-right {
     position: absolute; top: 70px; right: 0; left: 0;
@@ -119,8 +119,9 @@ section { padding: 60px 0; }
     background: var(--bg); border-bottom: 2px solid var(--brut);
     max-height: 0; overflow: hidden; transition: max-height .25s var(--ease); padding: 0 24px;
   }
-  .nav-right.open { max-height: 460px; padding: 16px 24px; }
+  .nav-right.open { max-height: 520px; padding: 16px 24px; }
   .nav-links { flex-direction: column; }
+  .wallet-chip { flex-wrap: wrap; }
 }
 
 /* ---------- Buttons (square, hard shadow, press on hover) ---------- */
@@ -198,8 +199,8 @@ a.card .more { color: var(--accent); font-weight: 700; font-size: .9rem; margin-
 .callout strong { color: var(--accent); }
 .pill { display: inline-block; font-size: .8rem; padding: 5px 12px; border: 2px solid var(--brut); color: var(--text); white-space: nowrap; text-transform: uppercase; font-weight: 700; }
 .pill.ok { color: #000; background: var(--accent-2); }
-.wallet-chip { display: flex; align-items: stretch; gap: 10px; flex-wrap: wrap; }
-.wallet-chip .pill { display: inline-flex; align-items: center; padding: 10px 14px; font-size: .82rem; box-shadow: 4px 4px 0 0 var(--brut); }
+.wallet-chip { display: flex; align-items: stretch; gap: 8px; flex-wrap: nowrap; }
+.wallet-chip .pill { display: inline-flex; align-items: center; padding: 8px 12px; font-size: .8rem; white-space: nowrap; box-shadow: 4px 4px 0 0 var(--brut); }
 .wallet-err { align-self: center; color: var(--danger); font-size: .78rem; font-weight: 700; text-transform: uppercase; }
 
 /* ---------- Portfolio banner ---------- */

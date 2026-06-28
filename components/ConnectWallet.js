@@ -92,16 +92,13 @@ export default function ConnectWallet() {
 
   // --- Connected ---
   const bal = balance
-    ? `${Number(balance.formatted).toFixed(4)} ${balance.symbol}`
-    : "… ETH";
+    ? `${Number(balance.formatted).toFixed(3)} ${balance.symbol}`
+    : "…";
 
   return (
     <div className="wallet-chip">
-      <span className="pill ok" title={address}>
-        🟢 {shortAddress(address)}
-      </span>
-      <span className="pill" title="Live ETH balance">
-        {bal}
+      <span className="pill ok" title={`${address}\nBalance: ${bal}`}>
+        🟢 {shortAddress(address)} · {bal}
       </span>
       <Button variant="ghost" className="sm" onClick={() => disconnect()}>
         Disconnect
