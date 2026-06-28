@@ -257,6 +257,19 @@ a.card .more { color: var(--accent); font-weight: 700; font-size: .9rem; margin-
 .coin-logo { border: 2px solid var(--brut); flex: 0 0 auto; }
 .spark { display: block; }
 
+/* ---------- Simulator (multi-block) ---------- */
+.sim-controls { display: flex; justify-content: space-between; gap: 18px; flex-wrap: wrap; align-items: flex-end; margin-bottom: 22px; border: 2px solid var(--brut); padding: 18px; background: var(--card); }
+.diff-control { display: flex; flex-direction: column; gap: 8px; min-width: 240px; flex: 1; }
+.diff-control label { font-size: .82rem; text-transform: uppercase; font-weight: 700; }
+.diff-control input[type="range"] { width: 100%; accent-color: var(--accent); cursor: pointer; }
+.sim-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+.chain-col { display: flex; flex-direction: column; }
+.chain-down { font-size: 1.6rem; justify-content: center; margin: 8px 0; }
+.sim-block .btn { margin-top: 14px; }
+.sim-meta { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; color: var(--muted); font-size: .78rem; margin: 12px 0; }
+.sim-meta code { background: var(--bg); border: 2px solid var(--border); }
+.mine-stats { margin-top: 10px; font-family: var(--mono); font-size: .78rem; color: var(--accent-2); }
+
 /* ---------- Loading / skeleton ---------- */
 .spinner-wrap { display: flex; align-items: center; gap: 12px; color: var(--muted); text-transform: uppercase; font-weight: 700; }
 .spinner { width: 22px; height: 22px; border: 3px solid var(--border); border-top-color: var(--accent); animation: spin .8s linear infinite; display: inline-block; }

@@ -2,80 +2,120 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import Button from "@/components/Button";
+import { sha256Hex, blockString, GENESIS_PREV } from "@/lib/hash";
 
-// ----- Mining settings -----
-const DIFFICULTY = "00"; // a block is "valid" when its hash starts with this prefix
-const GENESIS_PREV = "0".repeat(64); // Block 1 points to an all-zero "previous hash"
+const INITIAL = [
+  "Genesis block",
+  "Alice pays Bob 5 coins",
+  "Bob pays Carol 2 coins",
+  "Carol pays Dave 1 coin",
+  "Dave pays Erin 3 coins",
+];
 
-// Real SHA-256 using the browser's built-in Web Crypto API.
-async function sha256(text) {
-  const bytes = new TextEncoder().encode(text);
-  const buf = await crypto.subtle.digest("SHA-256", bytes);
-  return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, "0")).join("");
-}
-
-// A block's hash is built from ALL its fields, including the previous hash —
-// that linkage is what chains the blocks together.
-function blockString(index, prevHash, nonce, data) {
-  return `${index}|${prevHash}|${nonce}|${data}`;
-}
+const tick = () => new Promise((r) => setTimeout(r, 0));
 
 export default function SimulatorPage() {
-  // Block 1
-  const [data1, setData1] = useState("Alice pays Bob 5 coins");
-  const [nonce1, setNonce1] = useState(0);
-  const [hash1, setHash1] = useState("");
-  const [mining1, setMining1] = useState(false);
+  const [datas, setDatas] = useState(INITIAL);
+  const [nonces, setNonces] = useState(() => INITIAL.map(() => 0));
+  const [hashes, setHashes] = useState([]);
+  const [difficulty, setDifficulty] = useState(2); // leading zeros required
+  const [miningIndex, setMiningIndex] = useState(null);
+  const [stats, setStats] = useState({}); // index -> { attempts, elapsed, hps, done }
 
-  // Block 2 — its "previous hash" is Block 1's hash (auto-filled).
-  const [data2, setData2] = useState("Bob pays Carol 2 coins");
-  const [nonce2, setNonce2] = useState(0);
-  const [hash2, setHash2] = useState("");
-  const [mining2, setMining2] = useState(false);
+  const prefix = "0".repeat(difficulty);
 
-  // Recompute both hashes whenever any input changes. Because Block 2 depends
-  // on Block 1's hash, editing Block 1 instantly ripples into Block 2.
+  // Recompute the whole chain whenever data or nonces change. Each block's hash
+  // depends on the previous block's hash — so editing one cascades downward.
   useEffect(() => {
     let active = true;
     (async () => {
-      const h1 = await sha256(blockString(1, GENESIS_PREV, nonce1, data1));
-      const h2 = await sha256(blockString(2, h1, nonce2, data2));
-      if (active) {
-        setHash1(h1);
-        setHash2(h2);
+      const hs = [];
+      let prev = GENESIS_PREV;
+      for (let i = 0; i < datas.length; i++) {
+        const h = await sha256Hex(blockString(i, prev, nonces[i], datas[i]));
+        hs.push(h);
+        prev = h;
       }
+      if (active) setHashes(hs);
     })();
     return () => {
       active = false;
     };
-  }, [data1, nonce1, data2, nonce2]);
+  }, [datas, nonces]);
 
-  const valid1 = hash1.startsWith(DIFFICULTY);
-  const valid2 = hash2.startsWith(DIFFICULTY);
+  const isValid = (i) => hashes[i]?.startsWith(prefix);
 
-  // "Mining" = brute-force the nonce until the hash starts with "00".
-  async function mineBlock1() {
-    setMining1(true);
-    let n = 0;
-    let h = await sha256(blockString(1, GENESIS_PREV, n, data1));
-    while (!h.startsWith(DIFFICULTY)) {
-      n++;
-      h = await sha256(blockString(1, GENESIS_PREV, n, data1));
-    }
-    setNonce1(n);
-    setMining1(false);
+  function editData(i, value) {
+    setDatas((prev) => prev.map((d, idx) => (idx === i ? value : d)));
   }
 
-  async function mineBlock2() {
-    setMining2(true);
+  // Brute-force the nonce for block `i` until its hash starts with `prefix`.
+  async function mineBlock(i) {
+    setMiningIndex(i);
+    const prev = i === 0 ? GENESIS_PREV : hashes[i - 1];
+    const data = datas[i];
+    const start = performance.now();
     let n = 0;
-    let h = await sha256(blockString(2, hash1, n, data2));
-    while (!h.startsWith(DIFFICULTY)) {
+    let h = await sha256Hex(blockString(i, prev, n, data));
+    let lastTick = start;
+    while (!h.startsWith(prefix)) {
       n++;
-      h = await sha256(blockString(2, hash1, n, data2));
+      h = await sha256Hex(blockString(i, prev, n, data));
+      if (n % 2000 === 0) {
+        const now = performance.now();
+        setStats((s) => ({
+          ...s,
+          [i]: { attempts: n, elapsed: now - start, hps: Math.round((2000 / (now - lastTick)) * 1000), done: false },
+        }));
+        lastTick = now;
+        await tick(); // yield so the UI can repaint the live stats
+      }
     }
-    setNonce2(n);
-    setMining2(false);
+    const end = performance.now();
+    const elapsed = end - start;
+    setStats((s) => ({
+      ...s,
+      [i]: { attempts: n, elapsed, hps: Math.round(n / (elapsed / 1000)) || n, done: true },
+    }));
+    setNonces((prev2) => prev2.map((v, idx) => (idx === i ? n : v)));
+    setMiningIndex(null);
+  }
+
+  // Mine every block in order (each chains off the freshly mined previous one).
+  async function mineAll() {
+    let prev = GENESIS_PREV;
+    const newNonces = [...nonces];
+    for (let i = 0; i < datas.length; i++) {
+      setMiningIndex(i);
+      const start = performance.now();
+      let n = 0;
+      let h = await sha256Hex(blockString(i, prev, n, datas[i]));
+      let lastTick = start;
+      while (!h.startsWith(prefix)) {
+        n++;
+        h = await sha256Hex(blockString(i, prev, n, datas[i]));
+        if (n % 2000 === 0) {
+          const now = performance.now();
+          setStats((s) => ({ ...s, [i]: { attempts: n, elapsed: now - start, hps: Math.round((2000 / (now - lastTick)) * 1000), done: false } }));
+          lastTick = now;
+          await tick();
+        }
+      }
+      const end = performance.now();
+      const elapsed = end - start;
+      newNonces[i] = n;
+      prev = h;
+      setStats((s) => ({ ...s, [i]: { attempts: n, elapsed, hps: Math.round(n / (elapsed / 1000)) || n, done: true } }));
+    }
+    setNonces(newNonces);
+    setMiningIndex(null);
+  }
+
+  function reset() {
+    setDatas(INITIAL);
+    setNonces(INITIAL.map(() => 0));
+    setStats({});
   }
 
   return (
@@ -87,81 +127,98 @@ export default function SimulatorPage() {
             Block <span className="grad">simulator</span>
           </h1>
           <p className="lead">
-            &quot;Mining&quot; means tweaking a number called the <strong>nonce</strong>{" "}
-            until a block&apos;s hash starts with <code>00</code> (our simplified
-            proof-of-work). Mine both blocks below — then edit Block 1 and watch
-            the chain break.
+            &quot;Mining&quot; means tweaking a <strong>nonce</strong> until a block&apos;s
+            hash starts with the required number of zeros (proof-of-work). Mine the
+            chain, then edit an early block and watch every block after it break.
           </p>
         </div>
       </header>
 
       <section className="container">
-        <div className="chain2">
-          {/* ---------- BLOCK 1 ---------- */}
-          <article className={`sim-block ${valid1 ? "valid" : "invalid"}`}>
-            <div className="sim-head">
-              <h3>Block #1</h3>
-              <span className={`pill ${valid1 ? "ok" : "bad"}`}>
-                {valid1 ? "✓ Valid" : "✗ Invalid"}
-              </span>
-            </div>
-            <label>Block Data</label>
-            <input value={data1} onChange={(e) => setData1(e.target.value)} />
-            <label>Previous Hash</label>
-            <input value={GENESIS_PREV} readOnly className="ro" />
-            <label>Nonce</label>
+        {/* ===== Controls ===== */}
+        <div className="sim-controls">
+          <div className="diff-control">
+            <label>
+              Difficulty: <strong>{difficulty}</strong> leading zero{difficulty > 1 ? "s" : ""}{" "}
+              <span className="muted-cell">(target {prefix}…)</span>
+            </label>
             <input
-              type="number"
-              value={nonce1}
-              onChange={(e) => setNonce1(Number(e.target.value) || 0)}
+              type="range"
+              min="1"
+              max="4"
+              value={difficulty}
+              onChange={(e) => setDifficulty(Number(e.target.value))}
+              disabled={miningIndex !== null}
             />
-            <label>Hash</label>
-            <div className={`hash-out ${valid1 ? "good" : "bad"}`}>{hash1}</div>
-            <button className="btn primary full" onClick={mineBlock1} disabled={mining1}>
-              {mining1 ? "Mining…" : "⛏️ Mine Block 1"}
-            </button>
-          </article>
+          </div>
+          <div className="sim-actions">
+            <Button onClick={mineAll} disabled={miningIndex !== null}>
+              {miningIndex !== null ? "Mining…" : "⛏️ Mine all"}
+            </Button>
+            <Button variant="ghost" onClick={reset} disabled={miningIndex !== null}>
+              Reset
+            </Button>
+          </div>
+        </div>
 
-          <div className="link-arrow" aria-hidden="true">→</div>
+        {/* ===== The chain ===== */}
+        <div className="chain-col">
+          {datas.map((data, i) => {
+            const valid = isValid(i);
+            const st = stats[i];
+            const mining = miningIndex === i;
+            return (
+              <div key={i}>
+                <article className={`sim-block ${valid ? "valid" : "invalid"}`}>
+                  <div className="sim-head">
+                    <h3>Block #{i}</h3>
+                    <span className={`pill ${valid ? "ok" : "bad"}`}>
+                      {valid ? "✓ Valid" : "✗ Invalid"}
+                    </span>
+                  </div>
+                  <label>Block Data</label>
+                  <input value={data} onChange={(e) => editData(i, e.target.value)} disabled={miningIndex !== null} />
+                  <div className="sim-meta">
+                    <span>Prev: <code className="mono">{(i === 0 ? GENESIS_PREV : hashes[i - 1] || "").slice(0, 16)}…</code></span>
+                    <span>Nonce: <strong>{nonces[i]}</strong></span>
+                  </div>
+                  <label>Hash</label>
+                  <div className={`hash-out ${valid ? "good" : "bad"}`}>{hashes[i] || "…"}</div>
 
-          {/* ---------- BLOCK 2 ---------- */}
-          <article className={`sim-block ${valid2 ? "valid" : "invalid"}`}>
-            <div className="sim-head">
-              <h3>Block #2</h3>
-              <span className={`pill ${valid2 ? "ok" : "bad"}`}>
-                {valid2 ? "✓ Valid" : "✗ Invalid"}
-              </span>
-            </div>
-            <label>Block Data</label>
-            <input value={data2} onChange={(e) => setData2(e.target.value)} />
-            <label>Previous Hash (= Block 1&apos;s hash)</label>
-            <input value={hash1} readOnly className="ro" />
-            <label>Nonce</label>
-            <input
-              type="number"
-              value={nonce2}
-              onChange={(e) => setNonce2(Number(e.target.value) || 0)}
-            />
-            <label>Hash</label>
-            <div className={`hash-out ${valid2 ? "good" : "bad"}`}>{hash2}</div>
-            <button className="btn primary full" onClick={mineBlock2} disabled={mining2}>
-              {mining2 ? "Mining…" : "⛏️ Mine Block 2"}
-            </button>
-          </article>
+                  {(mining || st) && (
+                    <div className="mine-stats">
+                      {st && (
+                        <>
+                          {st.done ? "Mined" : "Mining"} · {st.attempts.toLocaleString()} hashes ·{" "}
+                          {(st.elapsed / 1000).toFixed(2)}s · {st.hps.toLocaleString()} H/s
+                        </>
+                      )}
+                    </div>
+                  )}
+
+                  <Button className="full" onClick={() => mineBlock(i)} disabled={miningIndex !== null}>
+                    {mining ? "Mining…" : `⛏️ Mine Block ${i}`}
+                  </Button>
+                </article>
+                {i < datas.length - 1 && <div className="link-arrow chain-down" aria-hidden="true">↓</div>}
+              </div>
+            );
+          })}
         </div>
 
         <div className="callout">
-          <strong>The core insight — immutability:</strong> mine both blocks so
-          they&apos;re valid, then change Block 1&apos;s data. Block 1&apos;s hash
-          no longer starts with <code>00</code>, and because that hash is Block
-          2&apos;s &quot;previous hash&quot;, Block 2 breaks too. To cheat the
-          chain you&apos;d have to re-mine every following block — which is exactly
-          what makes a real blockchain tamper-proof.
+          <strong>The core insight — immutability:</strong> mine the whole chain so
+          every block is valid, then change the data in an early block. Its hash
+          stops matching the difficulty, and because each block embeds the previous
+          block&apos;s hash, <em>every</em> block after it turns invalid too. To
+          cheat the chain you&apos;d have to re-mine all of them — which is exactly
+          what makes a real blockchain tamper-proof. Raise the difficulty and watch
+          mining take dramatically longer.
         </div>
       </section>
 
       <nav className="container pagenav">
-        <Link className="btn ghost" href="/prices">← Live Prices</Link>
+        <Link className="btn ghost" href="/portfolio">← Portfolio</Link>
         <Link className="btn primary" href="/">Back to Home ↑</Link>
       </nav>
     </>
