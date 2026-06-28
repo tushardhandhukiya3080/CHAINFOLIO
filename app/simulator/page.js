@@ -7,13 +7,8 @@ import Card from "@/components/Card";
 import InfoTip from "@/components/InfoTip";
 import { sha256Hex, blockString, GENESIS_PREV } from "@/lib/hash";
 
-const INITIAL = [
-  "Genesis block",
-  "Alice pays Bob 5 coins",
-  "Bob pays Carol 2 coins",
-  "Carol pays Dave 1 coin",
-  "Dave pays Erin 3 coins",
-];
+// Start with just the Genesis block — the user grows the chain with "+ Add block".
+const INITIAL = ["Genesis block"];
 
 // Odds that a random hash starts with N leading zeros (16^N possibilities).
 const ODDS = { 1: "16", 2: "256", 3: "4,096", 4: "65,536" };
