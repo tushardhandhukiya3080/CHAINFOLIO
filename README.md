@@ -71,15 +71,24 @@ npm run start
 
 ## Screenshots
 
-> Add screenshots to a `screenshots/` folder and they'll render here.
+### Home / Landing
+![Home](screenshots/home.png)
 
-| Home | Live Prices |
-|------|-------------|
-| ![Home](screenshots/home.png) | ![Live Prices](screenshots/prices.png) |
+### Concepts
+![Concepts](screenshots/concepts.png)
 
-| Portfolio | Block Simulator |
-|-----------|-----------------|
-| ![Portfolio](screenshots/portfolio.png) | ![Simulator](screenshots/simulator.png) |
+### Live Prices (CoinGecko)
+![Live Prices](screenshots/prices.png)
+
+### Block Simulator
+![Block Simulator](screenshots/simulator.png)
+
+### Sign In / Sign Up
+![Auth](screenshots/login.png)
+
+> Captured from the production build in the dark theme. The site also ships a
+> light theme (toggle in the navbar). Tip: append `?noloader` to any URL to skip
+> the intro animation.
 
 ## Security notes
 - No secrets in the client; the CoinGecko public API needs no key.

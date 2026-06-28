@@ -32,7 +32,7 @@ export default function RootLayout({ children }) {
         <script
           dangerouslySetInnerHTML={{
             __html:
-              "try{document.documentElement.dataset.theme=localStorage.getItem('chainfolio_theme')||'dark'}catch(e){document.documentElement.dataset.theme='dark'}",
+              "try{document.documentElement.dataset.theme=localStorage.getItem('chainfolio_theme')||'dark';if(location.search.indexOf('noloader')>-1)document.documentElement.setAttribute('data-screenshot','1')}catch(e){document.documentElement.dataset.theme='dark'}",
           }}
         />
       </head>

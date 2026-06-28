@@ -13,6 +13,12 @@ export default function Loader() {
   const rafRef = useRef(0);
 
   useEffect(() => {
+    // Allow skipping the intro (e.g. ?noloader for screenshots / quick access).
+    if (typeof window !== "undefined" && new URLSearchParams(window.location.search).has("noloader")) {
+      setActive(false);
+      return;
+    }
+
     let startTs;
     let hideTimer;
     const step = (ts) => {
