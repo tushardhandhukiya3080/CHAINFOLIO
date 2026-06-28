@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Button from "@/components/Button";
 import Card from "@/components/Card";
+import InfoTip from "@/components/InfoTip";
 import { sha256Hex, blockString, GENESIS_PREV } from "@/lib/hash";
 
 const INITIAL = [
@@ -146,7 +147,8 @@ export default function SimulatorPage() {
           <div className="diff-control">
             <label>
               Difficulty: <strong>{difficulty}</strong> leading zero{difficulty > 1 ? "s" : ""}{" "}
-              <span className="muted-cell">(target {prefix}…)</span>
+              <span className="muted-cell">(target {prefix}…)</span>{" "}
+              <InfoTip term="difficulty" />
             </label>
             <input
               type="range"
@@ -281,10 +283,10 @@ export default function SimulatorPage() {
                   <label>Block Data</label>
                   <input value={data} onChange={(e) => editData(i, e.target.value)} disabled={miningIndex !== null} />
                   <div className="sim-meta">
-                    <span>Prev: <code className="mono">{(i === 0 ? GENESIS_PREV : hashes[i - 1] || "").slice(0, 16)}…</code></span>
-                    <span>Nonce: <strong>{nonces[i]}</strong></span>
+                    <span>Prev <InfoTip term="prevHash" />: <code className="mono">{(i === 0 ? GENESIS_PREV : hashes[i - 1] || "").slice(0, 16)}…</code></span>
+                    <span>Nonce <InfoTip term="nonce" align="right" />: <strong>{nonces[i]}</strong></span>
                   </div>
-                  <label>Hash</label>
+                  <label>Hash <InfoTip term="hash" /></label>
                   <div className={`hash-out ${valid ? "good" : "bad"}`}>{hashes[i] || "…"}</div>
 
                   {(mining || st) && (
