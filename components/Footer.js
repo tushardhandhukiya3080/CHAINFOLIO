@@ -5,7 +5,7 @@ const AUTHOR = "Tushar Dhandhukiya";
 const GITHUB_URL = "https://github.com/tushardhandhukiya3080";
 const REPO_URL = "https://github.com/tushardhandhukiya3080/CHAINFOLIO";
 const LINKEDIN_URL = "https://www.linkedin.com/in/tushar-dhandhukiya-b570b8368";
-const EMAIL = "officialog011@gmail.com";
+const EMAIL = "tushardhandhukiya07@gmail.com";
 const BATCH = "Web3 Development Batch 2026";
 // ▲▲▲ ------------------------------- ▲▲▲
 
