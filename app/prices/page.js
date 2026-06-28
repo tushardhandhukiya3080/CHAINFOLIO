@@ -6,6 +6,7 @@ import Card from "@/components/Card";
 import Button from "@/components/Button";
 import Spinner from "@/components/Spinner";
 import Sparkline from "@/components/Sparkline";
+import CoinChartModal from "@/components/CoinChartModal";
 import { fetchMarkets, formatMoney } from "@/lib/coingecko";
 
 const STATE = { LOADING: "loading", SUCCESS: "success", ERROR: "error" };
@@ -40,6 +41,7 @@ export default function PricesPage() {
   const [query, setQuery] = useState("");
   const [sortKey, setSortKey] = useState("rank"); // rank | price | change | mcap
   const [sortDir, setSortDir] = useState("asc");
+  const [selected, setSelected] = useState(null); // coin whose live chart is open
 
   const coolTimer = useRef(null);
 
@@ -219,7 +221,17 @@ export default function PricesPage() {
                             )}
                           </td>
                           <td className="mono">{formatMoney(c.market_cap, currency)}</td>
-                          <td><Sparkline data={c.sparkline_in_7d?.price || []} /></td>
+                          <td>
+                            <button
+                              type="button"
+                              className="spark-btn"
+                              onClick={() => setSelected(c)}
+                              aria-label={`Open live chart for ${c.name}`}
+                              title="View live chart"
+                            >
+                              <Sparkline data={c.sparkline_in_7d?.price || []} />
+                            </button>
+                          </td>
                         </tr>
                       );
                     })
@@ -244,6 +256,10 @@ export default function PricesPage() {
         <Link className="btn ghost" href="/concepts">← Concepts</Link>
         <Link className="btn primary" href="/portfolio">Portfolio →</Link>
       </nav>
+
+      {selected && (
+        <CoinChartModal coin={selected} currency={currency} onClose={() => setSelected(null)} />
+      )}
     </>
   );
 }

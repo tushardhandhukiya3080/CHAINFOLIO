@@ -304,6 +304,29 @@ a.card .more { color: var(--accent); font-weight: 700; font-size: .9rem; margin-
 .coin-cell { display: flex; align-items: center; gap: 10px; }
 .coin-logo { border: 2px solid var(--brut); flex: 0 0 auto; }
 .spark { display: block; }
+.spark-btn { background: none; border: 2px solid transparent; padding: 2px; cursor: pointer; }
+.spark-btn:hover { border-color: var(--accent); }
+
+/* ---------- Coin live-chart modal ---------- */
+.modal-overlay { position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,.6); display: flex; align-items: center; justify-content: center; padding: 20px; }
+.modal-card { width: 100%; max-width: 680px; max-height: 90vh; overflow: auto; background: var(--card); border: 2px solid var(--brut); box-shadow: 8px 8px 0 0 var(--accent); padding: 24px; }
+.modal-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 16px; }
+.modal-coin { display: flex; align-items: center; gap: 12px; }
+.modal-price { font-family: var(--mono); font-size: 1.05rem; margin-top: 4px; }
+.modal-close { width: 34px; height: 34px; flex: 0 0 auto; border: 2px solid var(--brut); border-radius: 0; background: var(--bg); color: var(--text); cursor: pointer; font-weight: 700; }
+.modal-close:hover { background: var(--danger); color: #000; }
+.modal-ranges { display: flex; gap: 8px; margin-bottom: 16px; }
+.price-chart { display: block; width: 100%; height: 220px; background: var(--bg); border: 2px solid var(--border); }
+.pc-area { stroke: none; opacity: .12; }
+.pc-area.up { fill: var(--accent-2); }
+.pc-area.down { fill: var(--danger); }
+.chart-loading { display: flex; justify-content: center; padding: 60px 0; }
+.chart-empty { padding: 40px; text-align: center; color: var(--muted); border: 2px solid var(--border); }
+.modal-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 16px; }
+.modal-stats > div { border: 2px solid var(--brut); background: var(--bg-soft); padding: 10px 12px; display: flex; flex-direction: column; gap: 4px; }
+.modal-stats span { font-size: .68rem; text-transform: uppercase; color: var(--muted); font-weight: 700; letter-spacing: .04em; }
+.modal-stats strong { font-family: var(--mono); font-size: .95rem; }
+@media (max-width: 460px) { .modal-stats { grid-template-columns: 1fr; } }
 
 /* ---------- Simulator (multi-block) ---------- */
 .sim-controls { display: flex; justify-content: space-between; gap: 18px; flex-wrap: wrap; align-items: flex-end; margin-bottom: 22px; border: 2px solid var(--brut); padding: 18px; background: var(--card); }
