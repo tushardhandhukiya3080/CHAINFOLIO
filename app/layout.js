@@ -1,6 +1,6 @@
 import "./globals.css";
 import localFont from "next/font/local";
-import { WalletProvider } from "@/context/WalletContext";
+import Web3Provider from "@/components/Web3Provider";
 import { AuthProvider } from "@/context/AuthContext";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -27,13 +27,13 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className={ganey.variable}>
       <body>
-        <AuthProvider>
-          <WalletProvider>
+        <Web3Provider>
+          <AuthProvider>
             <Navbar />
             <main>{children}</main>
             <Footer />
-          </WalletProvider>
-        </AuthProvider>
+          </AuthProvider>
+        </Web3Provider>
       </body>
     </html>
   );
