@@ -1,8 +1,8 @@
 import Link from "next/link";
 
 // ▼▼▼ EDIT THESE to your own details ▼▼▼
-const AUTHOR = "Your Name";
-const GITHUB_URL = "https://github.com/your-username";
+const AUTHOR = "Tushar Dhandhukiya";
+const GITHUB_URL = "https://github.com/tushardhandhukiya3080/CHAINFOLIO";
 const BATCH = "Your Batch Name";
 // ▲▲▲ ------------------------------- ▲▲▲
 
