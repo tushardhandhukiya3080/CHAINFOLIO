@@ -318,6 +318,25 @@ a.card .more { color: var(--accent); font-weight: 700; font-size: .9rem; margin-
 .sim-meta code { background: var(--bg); border: 2px solid var(--border); }
 .mine-stats { margin-top: 10px; font-family: var(--mono); font-size: .78rem; color: var(--accent-2); }
 
+/* ---------- "How mining works" explainer ---------- */
+.mining-help-wrap { margin: -6px 0 22px; }
+.help-toggle.full { justify-content: space-between; }
+.mining-help { margin-top: 14px; animation: help-in .25s var(--ease); }
+@keyframes help-in { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .mining-help { animation: none; } }
+.help-h { text-transform: uppercase; font-size: 1.02rem; margin: 22px 0 8px; color: var(--text); }
+.help-h:first-of-type { margin-top: 14px; }
+.mining-help p { color: var(--muted); margin: 0 0 10px; }
+.mining-help strong { color: var(--text); }
+.odds-list { list-style: none; margin: 8px 0 12px; padding: 0; display: grid; gap: 0; max-width: 340px; }
+.odds-list li { display: flex; justify-content: space-between; gap: 16px; font-family: var(--mono); font-size: .85rem; color: var(--text); border: 2px solid var(--border); border-bottom: 0; padding: 8px 12px; }
+.odds-list li:last-child { border-bottom: 2px solid var(--border); }
+.odds-list li.active { background: var(--accent); color: #000; border-color: var(--brut); font-weight: 700; }
+.help-sub-toggle { margin-top: 8px; }
+.btc-detail { margin-top: 12px; border-left: 6px solid var(--accent-2); background: var(--bg-soft); padding: 14px 18px; animation: help-in .2s var(--ease); }
+.btc-detail p { margin: 0; }
+@media (prefers-reduced-motion: reduce) { .btc-detail { animation: none; } }
+
 /* ---------- Loading / skeleton ---------- */
 .spinner-wrap { display: flex; align-items: center; gap: 12px; color: var(--muted); text-transform: uppercase; font-weight: 700; }
 .spinner { width: 22px; height: 22px; border: 3px solid var(--border); border-top-color: var(--accent); animation: spin .8s linear infinite; display: inline-block; }
