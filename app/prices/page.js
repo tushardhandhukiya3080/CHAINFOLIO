@@ -7,7 +7,7 @@ import Button from "@/components/Button";
 import Spinner from "@/components/Spinner";
 import Sparkline from "@/components/Sparkline";
 import CoinChartModal from "@/components/CoinChartModal";
-import { fetchMarkets, formatMoney } from "@/lib/coingecko";
+import { fetchMarkets, formatMoney, formatCompact } from "@/lib/coingecko";
 
 const STATE = { LOADING: "loading", SUCCESS: "success", ERROR: "error" };
 const CURRENCIES = ["usd", "eur", "inr"];
@@ -46,6 +46,31 @@ export default function PricesPage() {
   const [selected, setSelected] = useState(null); // coin whose live chart is open
   const [page, setPage] = useState(1); // how many 250-coin pages are loaded
   const [loadingMore, setLoadingMore] = useState(false);
+  const [view, setView] = useState("cards"); // "cards" | "table"
+  const [favorites, setFavorites] = useState(() => new Set());
+
+  // Load favourites once on mount.
+  useEffect(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem("chainfolio_favs") || "[]");
+      if (Array.isArray(saved)) setFavorites(new Set(saved));
+    } catch {
+      /* ignore */
+    }
+  }, []);
+
+  function toggleFav(id) {
+    setFavorites((prev) => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      try {
+        localStorage.setItem("chainfolio_favs", JSON.stringify([...next]));
+      } catch {
+        /* ignore */
+      }
+      return next;
+    });
+  }
 
   const coolTimer = useRef(null);
 
@@ -152,6 +177,13 @@ export default function PricesPage() {
     return list;
   }, [coins, query, sortKey, sortDir]);
 
+  // Card view: favourites floated to the top.
+  const cardRows = useMemo(() => {
+    const fav = rows.filter((c) => favorites.has(c.id));
+    const rest = rows.filter((c) => !favorites.has(c.id));
+    return [...fav, ...rest];
+  }, [rows, favorites]);
+
   return (
     <>
       <header className="hero">
@@ -190,6 +222,10 @@ export default function PricesPage() {
           <Button onClick={refresh} disabled={cooling || status === STATE.LOADING}>
             {cooling ? "Wait…" : status === STATE.LOADING ? "Refreshing…" : "↻ Refresh"}
           </Button>
+          <div className="view-toggle" role="group" aria-label="View">
+            <button className={view === "cards" ? "active" : ""} aria-pressed={view === "cards"} onClick={() => setView("cards")}>Cards</button>
+            <button className={view === "table" ? "active" : ""} aria-pressed={view === "table"} onClick={() => setView("table")}>Table</button>
+          </div>
           {updatedAt && status === STATE.SUCCESS && (
             <span className="pill">Updated {updatedAt}</span>
           )}
@@ -210,75 +246,139 @@ export default function PricesPage() {
         )}
 
         {status === STATE.SUCCESS && (
-          <Card className="table-card">
-            <div className="table-scroll">
-              <table className="tx-table markets-table">
-                <thead>
-                  <tr>
-                    <th>Coin</th>
-                    <th className="sortable" onClick={() => toggleSort("price")}>Price{sortInd("price")}</th>
-                    <th className="sortable" onClick={() => toggleSort("change")}>24h%{sortInd("change")}</th>
-                    <th className="sortable" onClick={() => toggleSort("mcap")}>Market Cap{sortInd("mcap")}</th>
-                    <th>7d</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {rows.length === 0 ? (
-                    <tr><td colSpan={5} className="empty-row">No coins match “{query}”.</td></tr>
-                  ) : (
-                    rows.map((c) => {
-                      const change = c.price_change_percentage_24h_in_currency ?? c.price_change_percentage_24h;
-                      const up = (change ?? 0) >= 0;
-                      return (
-                        <tr key={c.id}>
-                          <td>
-                            <span className="coin-cell">
-                              {/* eslint-disable-next-line @next/next/no-img-element */}
-                              <img className="coin-logo" src={c.image} alt="" width={26} height={26} loading="lazy" />
-                              <span>
-                                <strong>{c.symbol?.toUpperCase()}</strong>{" "}
-                                <span className="muted-cell">{c.name}</span>
+          <>
+            {rows.length === 0 ? (
+              <Card className="empty-state">
+                <div className="ico">🔎</div>
+                <h3>No matches</h3>
+                <p>No coins match “{query}”.</p>
+              </Card>
+            ) : view === "cards" ? (
+              /* ===== Card view ===== */
+              <div className="coin-grid">
+                {cardRows.map((c) => {
+                  const change = c.price_change_percentage_24h_in_currency ?? c.price_change_percentage_24h;
+                  const up = (change ?? 0) >= 0;
+                  const fav = favorites.has(c.id);
+                  return (
+                    <div
+                      key={c.id}
+                      className="coin-card"
+                      role="button"
+                      tabIndex={0}
+                      onClick={() => setSelected(c)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setSelected(c); }
+                      }}
+                    >
+                      <div className="cc-head">
+                        <div className="cc-id">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img className="coin-logo" src={c.image} alt="" width={40} height={40} loading="lazy" />
+                          <div>
+                            <div className="coin-name">{c.name}</div>
+                            <div className="coin-symbol">{c.symbol?.toUpperCase()}</div>
+                          </div>
+                        </div>
+                        <button
+                          className={`cc-star ${fav ? "on" : ""}`}
+                          aria-pressed={fav}
+                          aria-label={fav ? `Unfavorite ${c.name}` : `Favorite ${c.name}`}
+                          onClick={(e) => { e.stopPropagation(); toggleFav(c.id); }}
+                        >
+                          ★
+                        </button>
+                      </div>
+                      <div className="cc-label">Current price</div>
+                      <div className="cc-price-row">
+                        <div className="cc-price">{formatMoney(c.current_price, currency)}</div>
+                        {change != null && (
+                          <span className={`cc-change ${up ? "up" : "down"}`}>
+                            {up ? "▲" : "▼"} {Math.abs(change).toFixed(2)}%
+                          </span>
+                        )}
+                      </div>
+                      <div className="cc-stats">
+                        <div><span>Market Cap</span><strong>{formatCompact(c.market_cap, currency)}</strong></div>
+                        <div><span>24h Volume</span><strong>{formatCompact(c.total_volume, currency)}</strong></div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              /* ===== Table view ===== */
+              <Card className="table-card">
+                <div className="table-scroll">
+                  <table className="tx-table markets-table">
+                    <thead>
+                      <tr>
+                        <th>Coin</th>
+                        <th className="sortable" onClick={() => toggleSort("price")}>Price{sortInd("price")}</th>
+                        <th className="sortable" onClick={() => toggleSort("change")}>24h%{sortInd("change")}</th>
+                        <th className="sortable" onClick={() => toggleSort("mcap")}>Market Cap{sortInd("mcap")}</th>
+                        <th>7d</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {rows.map((c) => {
+                        const change = c.price_change_percentage_24h_in_currency ?? c.price_change_percentage_24h;
+                        const up = (change ?? 0) >= 0;
+                        return (
+                          <tr key={c.id}>
+                            <td>
+                              <span className="coin-cell">
+                                {/* eslint-disable-next-line @next/next/no-img-element */}
+                                <img className="coin-logo" src={c.image} alt="" width={26} height={26} loading="lazy" />
+                                <span>
+                                  <strong>{c.symbol?.toUpperCase()}</strong>{" "}
+                                  <span className="muted-cell">{c.name}</span>
+                                </span>
                               </span>
-                            </span>
-                          </td>
-                          <td className="mono">{formatMoney(c.current_price, currency)}</td>
-                          <td>
-                            {change == null ? <span className="muted-cell">—</span> : (
-                              <span className={up ? "chg-up" : "chg-down"}>
-                                {up ? "▲" : "▼"} {Math.abs(change).toFixed(2)}%
-                              </span>
-                            )}
-                          </td>
-                          <td className="mono">{formatMoney(c.market_cap, currency)}</td>
-                          <td>
-                            <button
-                              type="button"
-                              className="spark-btn"
-                              onClick={() => setSelected(c)}
-                              aria-label={`Open live chart for ${c.name}`}
-                              title="View live chart"
-                            >
-                              <Sparkline data={c.sparkline_in_7d?.price || []} />
-                            </button>
-                          </td>
-                        </tr>
-                      );
-                    })
-                  )}
-                </tbody>
-              </table>
-            </div>
-            <div className="table-foot load-more-foot">
-              <span>
-                Showing {rows.length} of {coins.length} loaded coins · prices in {currency.toUpperCase()}
-              </span>
-              {page < MAX_PAGES && (
-                <Button variant="ghost" className="sm" onClick={loadMore} disabled={loadingMore}>
-                  {loadingMore ? "Loading…" : `Load more (+${PER_PAGE})`}
-                </Button>
-              )}
-            </div>
-          </Card>
+                            </td>
+                            <td className="mono">{formatMoney(c.current_price, currency)}</td>
+                            <td>
+                              {change == null ? <span className="muted-cell">—</span> : (
+                                <span className={up ? "chg-up" : "chg-down"}>
+                                  {up ? "▲" : "▼"} {Math.abs(change).toFixed(2)}%
+                                </span>
+                              )}
+                            </td>
+                            <td className="mono">{formatMoney(c.market_cap, currency)}</td>
+                            <td>
+                              <button
+                                type="button"
+                                className="spark-btn"
+                                onClick={() => setSelected(c)}
+                                aria-label={`Open live chart for ${c.name}`}
+                                title="View live chart"
+                              >
+                                <Sparkline data={c.sparkline_in_7d?.price || []} />
+                              </button>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </Card>
+            )}
+
+            {/* Shared footer: count + load more */}
+            {rows.length > 0 && (
+              <div className="prices-foot">
+                <span>
+                  Showing {rows.length} of {coins.length} loaded coins · prices in {currency.toUpperCase()}
+                </span>
+                {page < MAX_PAGES && (
+                  <Button variant="ghost" className="sm" onClick={loadMore} disabled={loadingMore}>
+                    {loadingMore ? "Loading…" : `Load more (+${PER_PAGE})`}
+                  </Button>
+                )}
+              </div>
+            )}
+          </>
         )}
 
         <div className="callout">
