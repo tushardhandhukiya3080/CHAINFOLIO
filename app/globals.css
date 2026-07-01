@@ -294,6 +294,10 @@ a.card .more { color: var(--accent); font-weight: 700; font-size: .9rem; margin-
 .empty-state { text-align: center; }
 .empty-state h3 { text-transform: uppercase; }
 .linklike { background: none; border: 0; color: var(--accent); font-weight: 700; cursor: pointer; text-transform: uppercase; font-family: inherit; }
+.live-tag { font-size: .6em; vertical-align: middle; background: var(--accent); color: #000; border: 2px solid var(--brut); padding: 2px 8px; text-transform: uppercase; font-weight: 700; margin-left: 8px; }
+.onchain-connect { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.onchain-connect h3 { margin: 0 0 6px; }
+.onchain-connect p { color: var(--muted); margin: 0; }
 
 /* ---------- Live Prices (markets table) ---------- */
 .prices-controls { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-bottom: 18px; }

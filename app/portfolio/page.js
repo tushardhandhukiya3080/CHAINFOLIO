@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import Card from "@/components/Card";
 import Button from "@/components/Button";
 import Spinner from "@/components/Spinner";
+import OnChainHoldings from "@/components/OnChainHoldings";
 import { useAuth } from "@/context/AuthContext";
 import { COIN_OPTIONS, COIN_BY_ID } from "@/lib/coins";
 import { fetchSimplePrices, formatMoney } from "@/lib/coingecko";
@@ -283,6 +284,17 @@ export default function PortfolioPage() {
             </Card>
           </>
         )}
+      </section>
+
+      {/* ===== Real on-chain balances (from the connected wallet) ===== */}
+      <section className="container">
+        <h2 className="section-title">On-chain balances <span className="live-tag">live</span></h2>
+        <p className="section-sub">
+          Read straight from Ethereum — your connected wallet&apos;s native ETH and ERC-20 token
+          balances, priced live. Manual holdings above are saved to your account; this section
+          reflects what&apos;s actually on-chain.
+        </p>
+        <OnChainHoldings />
       </section>
 
       <nav className="container pagenav">
