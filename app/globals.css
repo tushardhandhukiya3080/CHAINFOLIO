@@ -315,14 +315,15 @@ a.card .more { color: var(--accent); font-weight: 700; font-size: .9rem; margin-
 
 /* ---------- Coin live-chart modal ---------- */
 .modal-overlay { position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,.6); display: flex; align-items: center; justify-content: center; padding: 20px; }
-.modal-card { width: 100%; max-width: 680px; max-height: 90vh; overflow: auto; background: var(--card); border: 2px solid var(--brut); box-shadow: 8px 8px 0 0 var(--accent); padding: 24px; }
+.modal-card { width: 100%; max-width: 960px; max-height: 92vh; overflow: auto; background: var(--card); border: 2px solid var(--brut); box-shadow: 8px 8px 0 0 var(--accent); padding: 28px; }
 .modal-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 16px; }
 .modal-coin { display: flex; align-items: center; gap: 12px; }
 .modal-price { font-family: var(--mono); font-size: 1.05rem; margin-top: 4px; }
 .modal-close { width: 34px; height: 34px; flex: 0 0 auto; border: 2px solid var(--brut); border-radius: 0; background: var(--bg); color: var(--text); cursor: pointer; font-weight: 700; }
 .modal-close:hover { background: var(--danger); color: #000; }
 .modal-ranges { display: flex; gap: 8px; margin-bottom: 16px; }
-.price-chart { display: block; width: 100%; height: 220px; background: var(--bg); border: 2px solid var(--border); }
+.price-chart { display: block; width: 100%; height: clamp(320px, 52vh, 460px); background: var(--bg); border: 2px solid var(--border); }
+.price-chart polyline { vector-effect: non-scaling-stroke; }
 .pc-area { stroke: none; opacity: .12; }
 .pc-area.up { fill: var(--accent-2); }
 .pc-area.down { fill: var(--danger); }
