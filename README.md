@@ -69,6 +69,28 @@ npm run build    # production build (webpack)
 npm run start
 ```
 
+## Environment variables (all optional)
+
+The app runs with **no configuration** and **no secrets** in the client.
+
+| Variable | Purpose |
+|----------|---------|
+| `NEXT_PUBLIC_RPC_URL` | Optional dedicated Ethereum **mainnet** RPC URL used for on-chain reads (balances / multicall). If unset, a public no-key RPC is used. **Use an unkeyed/public URL** — `NEXT_PUBLIC_*` is exposed to the browser, so never put a keyed/secret RPC URL here. |
+
+```bash
+# .env.local (optional)
+NEXT_PUBLIC_RPC_URL=https://your-public-mainnet-rpc
+```
+
+## On-chain holdings
+
+On **/portfolio**, once a wallet is connected, the app reads the wallet's real
+balances directly from Ethereum mainnet — native **ETH** plus a curated set of
+**ERC-20 tokens** ([lib/tokens.js](lib/tokens.js)) fetched in a **single viem
+multicall** ([hooks/useOnChainBalances.js](hooks/useOnChainBalances.js)) — and
+values them in USD via the cached CoinGecko helper. It's **read-only** and sits
+alongside the existing manual-holdings section.
+
 ## Screenshots
 
 ### Home / Landing
